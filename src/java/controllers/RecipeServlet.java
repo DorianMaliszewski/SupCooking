@@ -6,8 +6,8 @@
 package controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,14 +16,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Recipe;
+import repositories.RecipeRepository;
 
 /**
  *
  * @author MaliszewskiDorian
  */
-@WebServlet(name = "Recipe", urlPatterns = "/recipe*")
+@WebServlet(name = "Recipe", urlPatterns = "/recipes/*")
 public class RecipeServlet extends HttpServlet {
-
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,14 +36,18 @@ public class RecipeServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ArrayList<Recipe> recipes = new ArrayList<Recipe>();
-        for(int i = 0 ; i < 5 ; i++){
+        System.out.println("RecipeController");
+        ArrayList<Recipe> recipes = new ArrayList();
+        List l = RecipeRepository.findAll();
+        recipes.addAll(l);
+        /*for(int i = 0 ; i < 5 ; i++){
             Recipe r = new Recipe();
             r.setId(i);
             r.setName("Recette " + i);
             r.setImage("Image " + i);
             recipes.add(r);
         }
+        */
         request.setAttribute("recipes", recipes);
         response.setContentType("text/html;charset=UTF-8");
         String url = "/recipe/index.jsp";

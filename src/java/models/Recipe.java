@@ -54,11 +54,30 @@ public class Recipe implements Serializable {
     @Column(name = "number_of_view")
     private Long numberOfView;
     
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User user;
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = User.class)
+    private User createdBy;
 
     @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
     private Collection<Product> products;
+    
+    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Category.class)
+    private Category category;
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public Collection<Product> getProducts() {
         return products;
@@ -68,14 +87,6 @@ public class Recipe implements Serializable {
         this.products = products;
     }
     
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public String getName() {
         return name;
     }

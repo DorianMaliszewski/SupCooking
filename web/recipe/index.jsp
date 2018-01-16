@@ -11,7 +11,6 @@
     </jsp:attribute>
     <jsp:body>
         <h1>Toutes les recettes</h1>
-        ${recipes}
         <div class="table-responsive">
             <table class="table">
                 <thead>

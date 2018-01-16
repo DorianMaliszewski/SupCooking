@@ -6,11 +6,13 @@
 package models;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  * Model de la classe utilisateur
@@ -30,7 +32,7 @@ public class User implements Serializable {
     @Column(name = "first_name", nullable = false)
     private String firstName;
     
-    @Column(name = "first_name", nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
     
     @Column(nullable = false, length = 50, unique = true)
@@ -46,11 +48,29 @@ public class User implements Serializable {
     private String salt;
     
     @Column(name = "remember_me", nullable = true)
-    private Boolean remermberMe;
+    private Boolean rememberMe;
+
+    public Boolean getRememberMe() {
+        return rememberMe;
+    }
+
+    public void setRememberMe(Boolean rememberMe) {
+        this.rememberMe = rememberMe;
+    }
+
+    public Collection<Recipe> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(Collection<Recipe> recipes) {
+        this.recipes = recipes;
+    }
     
     private String token;
     
-
+    @OneToMany(mappedBy = "createdBy")
+    private Collection<Recipe> recipes;
+    
     public String getUsername() {
         return username;
     }
@@ -105,14 +125,6 @@ public class User implements Serializable {
 
     public void setSalt(String salt) {
         this.salt = salt;
-    }
-
-    public boolean isRemermberMe() {
-        return remermberMe;
-    }
-
-    public void setRemermberMe(boolean remermberMe) {
-        this.remermberMe = remermberMe;
     }
 
     public String getToken() {

@@ -46,5 +46,11 @@ Contributor(s):
     <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/supcooking</property>
     <property name="hibernate.connection.username">postgres</property>
     <property name="hibernate.connection.password">postgres</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <property name="hibernate.show_sql">true</property>
+    <mapping class="models.Recipe"/>
+    <mapping class="models.Category"/>
+    <mapping class="models.Product"/>
+    <mapping class="models.User"/>
   </session-factory>
 </hibernate-configuration>
