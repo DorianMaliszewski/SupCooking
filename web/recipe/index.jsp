@@ -1,17 +1,45 @@
 <%-- 
     Document   : index
-    Created on : 16 janv. 2018, 16:47:24
+    Created on : 16 janv. 2018, 14:06:58
     Author     : MaliszewskiDorian
 --%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
-</html>
+<t:layout>
+    <jsp:attribute name="title">Recettes
+    </jsp:attribute>
+    <jsp:body>
+        <h1>Toutes les recettes</h1>
+        ${recipes}
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Id</td>
+                        <td>Image</td>
+                        <td>Name</td>
+                        <td>Description</td>
+                        <td>Catégorie</td>
+                        <td>Crée par</td>
+                        <td>Note</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <c:forEach var="recipe" items="${recipes}">
+                        <tr>
+                            <td>${recipe.id}</td>
+                            <td>${recipe.image}</td>
+                            <td>${recipe.name}</td>
+                            <td>${recipe.description}</td>
+                            <td>${recipe.category.name}</td>
+                            <td>${recipe.createdBy}</td>
+                            <td>${recipe.mark}</td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+    </jsp:body>
+</t:layout>

@@ -7,7 +7,6 @@ package models;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,7 +21,7 @@ import javax.persistence.OneToMany;
  * @author MaliszewskiDorian
  */
 @Entity
-public class Recipes implements Serializable {
+public class Recipe implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -167,10 +166,10 @@ public class Recipes implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Recipes)) {
+        if (!(object instanceof Recipe)) {
             return false;
         }
-        Recipes other = (Recipes) object;
+        Recipe other = (Recipe) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
