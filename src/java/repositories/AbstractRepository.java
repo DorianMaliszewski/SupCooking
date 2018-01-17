@@ -5,9 +5,8 @@
  */
 package repositories;
 
-import java.util.Collection;
 import java.util.List;
-import models.Recipe;
+import models.Category;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -21,11 +20,11 @@ abstract class AbstractRepository {
     private static Session session;
     private static Transaction t;
     
-    public static Object find(Class theClass, Integer id){
+    protected static Object find(Class theClass, Integer id){
         Object obj = null;
         try {
             startOperation();
-            obj = session.load(theClass, id);
+            obj = session.get(theClass, id);
             t.commit();
         } catch (HibernateException e) {
             System.err.println(e.getMessage());
@@ -35,7 +34,7 @@ abstract class AbstractRepository {
         return obj;
     }
     
-    public static List findAll(Class theClass){
+    protected static List findAll(Class theClass){
         List objs = null;
         try {
             startOperation();
@@ -49,8 +48,53 @@ abstract class AbstractRepository {
         return objs;
     }
     
+    protected static boolean add(Object o){
+        boolean success = true;
+        try {
+            startOperation();
+            session.persist(o);
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+            success = !success;
+        } finally {
+            session.close();        
+        }
+        return success;
+    }
+    
     private static void startOperation(){
         session = HibernateProvider.getFactory().openSession();
         t = session.beginTransaction();        
+    }
+
+    protected static boolean delete(Object o) {
+        boolean success = true;
+        try {
+            startOperation();
+            session.delete(o);
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+            success = !success;
+        } finally {
+            session.close();
+        }
+        return success;
+    }
+
+    static boolean edit(Object o) {
+        boolean success = true;
+        try {
+            startOperation();
+            session.merge(o);
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+            success = !success;
+        } finally {
+            session.close();
+        }
+        return success;
     }
 }

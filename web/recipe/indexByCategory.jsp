@@ -7,9 +7,9 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 
 <t:layout>
-    <jsp:attribute name="title">Categories
+    <jsp:attribute name="title">Recettes
     </jsp:attribute>
-    <jsp:body>        
+    <jsp:body>
         <c:if test="${message != null}">
             <c:choose>
                 <c:when test="${success != null}">
@@ -24,34 +24,35 @@
                 </c:otherwise>
             </c:choose>
         </c:if>
-        <h1>Toutes les categories</h1>
+        <h1>Toutes les recettes par categorie</h1>
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
                         <td>Id</td>
-                        <td>Nom</td>
-                        <td>Actions</td>
+                        <td>Image</td>
+                        <td>Name</td>
+                        <td>Description</td>
+                        <td>Catégorie</td>
+                        <td>Crée par</td>
+                        <td>Note</td>
                     </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="category" items="${categories}">
+
+                <c:forEach var="recipe" items="${recipes}">
                     <tr>
-                        <td>${category.id}</td>
-                        <td>${category.name}</td>
-                        <td>
-                            <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/categories/edit?id=${category.id}">Edit</a>
-                            <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/categories/delete?id=${category.id}">
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
+                        <td>${recipe.id}</td>
+                        <td>${recipe.image}</td>
+                        <td>${recipe.name}</td>
+                        <td>${recipe.description}</td>
+                        <td>${recipe.category.name}</td>
+                        <td>${recipe.createdBy}</td>
+                        <td>${recipe.mark}</td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
-        </div>
-        <div class="row">
-            <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/categories/add">Ajouter une categorie</a>
         </div>
     </jsp:body>
 </t:layout>

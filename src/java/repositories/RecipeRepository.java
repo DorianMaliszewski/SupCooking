@@ -21,4 +21,16 @@ public class RecipeRepository extends AbstractRepository {
         return AbstractRepository.findAll(Recipe.class);
     }
    
+    public static boolean add(Recipe r) {
+        return AbstractRepository.add(r);
+    }
+
+    public static boolean delete(Recipe r) {
+        return AbstractRepository.delete(r);
+    }
+
+    public static boolean edit(Recipe r) {
+        return AbstractRepository.edit(r);
+    }
+    
 }

@@ -60,7 +60,7 @@
     <body>
         <header>
             <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-                <a class="navbar-brand" href="#">Navbar</a>
+                <a class="navbar-brand" href="#">SupCooking</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -70,23 +70,22 @@
                         <li class="nav-item active">
                             <a class="nav-link" href="${pageContext.request.contextPath}/">Accueil<span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/recipe">Toutes les recettes</a>
+                        <li class="nav-item ${pageContext.request.servletContext.contextPath}">
+                            <a class="nav-link" href="${pageContext.request.contextPath}/recipes">Toutes les recettes</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/recipe/category">Par catégorie</a>
+                            <a class="nav-link" href="${pageContext.request.contextPath}/recipes/category">Par catégorie</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/recipe/product">Par produits</a>
+                            <a class="nav-link" href="${pageContext.request.contextPath}/recipes/product">Par produits</a>
                         </li>
-                        <!--<li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="${pageContext.request.contextPath}" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Recettes</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Administration</a>
                             <div class="dropdown-menu" aria-labelledby="dropdown01">
-                                <a class="dropdown-item" href="#">Tous</a>
-                                <a class="dropdown-item" href="#">Par produits</a>
-                                <a class="dropdown-item" href="#">Par catégories</a>
+                                <a class="dropdown-item" href="${pageContext.request.contextPath}/products">Produits</a>
+                                <a class="dropdown-item" href="${pageContext.request.contextPath}/categories">Categories</a>
                             </div>
-                        </li>-->
+                        </li>
                     </ul>
                     <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/login">Se connecter</a>
                     <form class="form-inline my-2 my-lg-0" action="${pageContext.request.contextPath}/search">

@@ -6,7 +6,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -14,6 +13,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import models.User;
+import providers.EncryptionProvider;
+import repositories.UserRepository;
 
 /**
  *
@@ -33,11 +35,31 @@ public class LoginServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        String url = "/login/index.jsp";
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher(url);
-        rd.forward(request, response);
+        if(request.getMethod().equals("POST"))
+        {
+            User user = UserRepository.findByUsername(request.getParameter("username"));
+            if(user == null){
+                response.setContentType("text/html;charset=UTF-8");
+                String url = "/login/login.jsp";
+                ServletContext sc = getServletContext();
+                RequestDispatcher rd = sc.getRequestDispatcher(url);
+                rd.forward(request, response);
+                return;
+            }
+            String[] pass = EncryptionProvider.encrypt(request.getParameter("password"));
+            if(user.getPassword().equals(pass[1]) && user.getSalt().equals(pass[0])){
+                request.getSession().setAttribute("user", user);
+                response.sendRedirect(getServletContext().getContextPath() + request.getServletPath());
+            }
+        }
+        else
+        {
+            response.setContentType("text/html;charset=UTF-8");
+            String url = "/login/login.jsp";
+            ServletContext sc = getServletContext();
+            RequestDispatcher rd = sc.getRequestDispatcher(url);
+            rd.forward(request, response);
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

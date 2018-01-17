@@ -1,5 +1,7 @@
 package providers;
 
+import models.Recipe;
+import models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -26,10 +28,21 @@ public class HibernateProvider {
         cfg.configure("hibernate.cfg.xml");
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(cfg.getProperties()).build();
         factory = cfg.buildSessionFactory(serviceRegistry);
+        Session s = factory.openSession();
+        User u = new User();
+        u.setUsername("admin");
+        String[] pass = EncryptionProvider.encrypt("admin");
+        u.setPassword(pass[1]);
+        u.setSalt(pass[0]);
+        u.setFirstName("Admin");
+        u.setLastName("Admin");
+        s.flush();
+        s.close();
     }
     
     public static SessionFactory getFactory(){
         if(factory == null || factory.isClosed()){
+            System.out.println("Initialize HibernateProvider");
             initialize();
         }
         return factory;

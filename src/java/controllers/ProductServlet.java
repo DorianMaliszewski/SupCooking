@@ -6,20 +6,24 @@
 package controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import models.Product;
+import repositories.ProductRepository;
 
 /**
  *
  * @author MaliszewskiDorian
  */
-@WebServlet(name = "Product", urlPatterns = "/product")
+@WebServlet(name = "Product", urlPatterns = "/products/*")
 public class ProductServlet extends HttpServlet {
 
+    private final String VIEW_PATH = "/product/";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -32,18 +36,11 @@ public class ProductServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ProductServlet</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ProductServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+        String url = VIEW_PATH + "index.jsp";
+        request.setAttribute("products", ProductRepository.findAll());
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(url);
+        rd.forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -85,4 +82,111 @@ public class ProductServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (req.getPathInfo() != null) {
+            switch (req.getPathInfo()) {
+                case "/show":
+                    show(req, resp);
+                    break;
+                case "/add":
+                    add(req, resp);
+                    break;
+                case "/edit":
+                    edit(req, resp);
+                    break;
+                case "/delete":
+                    delete(req, resp);
+                    break;
+                default:
+                    super.service(req, resp);
+                    break;
+            }
+        } 
+        else
+        {
+            super.service(req, resp);
+        }
+    }
+    
+    private void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getParameter("id") == null) {
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
+        Product product = ProductRepository.find(Integer.parseInt(request.getParameter("id")));
+        if (product == null) {
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
+        response.setContentType("text/html;charset=UTF-8");
+        String url = VIEW_PATH + "detail.jsp";
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(url);
+        rd.forward(request, response);
+    }
+
+    private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getMethod().equals("POST")) {
+            response.setContentType("text/html;charset=UTF-8");
+            Product product = new Product();
+            product.setName(request.getParameter("name"));
+            boolean success = ProductRepository.add(product);
+            String message = success ? "L'élément à bien été ajouté" : "Erreur lors de la création de l'élément";
+            request.getSession().setAttribute("success", success);
+            request.getSession().setAttribute("message", message);
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+        } else {
+            response.setContentType("text/html;charset=UTF-8");
+            String url = VIEW_PATH + "/form.jsp";
+            ServletContext sc = getServletContext();
+            RequestDispatcher rd = sc.getRequestDispatcher(url);
+            rd.forward(request, response);
+        }
+    }
+
+    private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (request.getParameter("id") == null) {
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
+        Product product = ProductRepository.find(Integer.parseInt(request.getParameter("id")));
+        if (request.getMethod().equals("POST")) {
+            response.setContentType("text/html;charset=UTF-8");
+            if (product == null) {
+                product = new Product();
+            }
+            product.setName(request.getParameter("name"));
+            boolean success = ProductRepository.edit(product);
+            String message = success ? "Modification réussie" : "Erreur lors de l'enregistrement";
+            request.getSession().setAttribute("success", success);
+            request.getSession().setAttribute("message", message);
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+        } else {
+            request.setAttribute("product", product);
+            response.setContentType("text/html;charset=UTF-8");
+            String url = VIEW_PATH + "form.jsp";
+            ServletContext sc = getServletContext();
+            RequestDispatcher rd = sc.getRequestDispatcher(url);
+            rd.forward(request, response);
+        }
+    }
+
+    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (request.getParameter("id") == null) {
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
+        Product product = ProductRepository.find(Integer.parseInt(request.getParameter("id")));
+        if (request.getMethod().equals("POST") && product != null) {
+            boolean success = ProductRepository.delete(product);
+            String message = success ? "Suppresion réussie" : "Erreur lors de la suppresion";
+            request.getSession().setAttribute("success", success);
+            request.getSession().setAttribute("message", message);
+
+        }
+        response.sendRedirect(request.getContextPath() + request.getServletPath());
+    }
+
+    
 }
