@@ -21,7 +21,7 @@ import repositories.UserRepository;
  *
  * @author MaliszewskiDorian
  */
-@WebServlet(name = "Login", urlPatterns = {"/login","/register"})
+@WebServlet(name = "Login", urlPatterns = "/login")
 public class LoginServlet extends HttpServlet {
 
     /**
@@ -35,31 +35,7 @@ public class LoginServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if(request.getMethod().equals("POST"))
-        {
-            User user = UserRepository.findByUsername(request.getParameter("username"));
-            if(user == null){
-                response.setContentType("text/html;charset=UTF-8");
-                String url = "/login/login.jsp";
-                ServletContext sc = getServletContext();
-                RequestDispatcher rd = sc.getRequestDispatcher(url);
-                rd.forward(request, response);
-                return;
-            }
-            String[] pass = EncryptionProvider.encrypt(request.getParameter("password"));
-            if(user.getPassword().equals(pass[1]) && user.getSalt().equals(pass[0])){
-                request.getSession().setAttribute("user", user);
-                response.sendRedirect(getServletContext().getContextPath() + request.getServletPath());
-            }
-        }
-        else
-        {
-            response.setContentType("text/html;charset=UTF-8");
-            String url = "/login/login.jsp";
-            ServletContext sc = getServletContext();
-            RequestDispatcher rd = sc.getRequestDispatcher(url);
-            rd.forward(request, response);
-        }
+        System.out.println("LoginController");       
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -75,6 +51,12 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+        System.out.println("Get method");
+        response.setContentType("text/html;charset=UTF-8");
+        String url = "/login/login.jsp";
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(url);
+        rd.forward(request, response);
     }
 
     /**
@@ -89,6 +71,40 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
+        System.out.println("POST method");
+        User user = null;
+        String pass = "";
+        try{
+            user = UserRepository.findByUsername(request.getParameter("username"));
+            if(request.getParameter("password") == null){
+                throw new NullPointerException("Le paramètre password n'est pas renseigné");
+            }
+            pass = request.getParameter("password");
+            
+        }catch(NullPointerException e){
+            e.printStackTrace();
+            System.out.println("Paramètres non renseignés");
+        }
+        if(user == null){
+            System.out.println("User not find");
+            response.setContentType("text/html;charset=UTF-8");
+            String url = "/login/login.jsp";
+            ServletContext sc = getServletContext();
+            RequestDispatcher rd = sc.getRequestDispatcher(url);
+            rd.forward(request, response);
+            return;
+        }
+        System.out.println("User find : " + user.getUsername());
+        
+        if(EncryptionProvider.verifyPassword(user.getPassword(), pass, user.getSalt())){
+            request.getSession().setAttribute("user", user);
+            response.sendRedirect(getServletContext().getContextPath());
+        }
+        else
+        {
+            System.out.println("Les identifiants ne correspondent pas");
+            response.sendRedirect(request.getContextPath() + request.getServletPath());           
+        }
     }
 
     /**
@@ -100,24 +116,4 @@ public class LoginServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if(req.getServletPath().equals("/register")){
-            this.getRegister(req, resp);
-        }
-        else{
-            super.service(req, resp);
-        }
-    }
-
-    private void getRegister(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        String url = "/login/register.jsp";
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher(url);
-        rd.forward(request, response);
-    }
-
-    
 }

@@ -6,7 +6,13 @@
 package repositories;
 
 import java.util.List;
+import javax.persistence.criteria.CriteriaQuery;
 import models.User;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import providers.HibernateProvider;
 
 /**
  *
@@ -33,7 +39,23 @@ public class UserRepository {
         return AbstractRepository.edit(u);
     }
 
-    public static User findByUsername(String parameter) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public static User findByUsername(String username) {
+        
+        Object obj = null;
+        Session session = null;
+        try {
+            session = HibernateProvider.getFactory().openSession();
+            Transaction t = session.beginTransaction();
+            Query q = session.createQuery("from User where username = :username");
+            q.setString("username", username);
+            obj = q.uniqueResult();
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            if(session != null)
+                session.close();
+        }
+        return (User)obj;
     }
 }

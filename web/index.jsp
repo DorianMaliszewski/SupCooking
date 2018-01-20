@@ -10,5 +10,8 @@
     </jsp:attribute>
     <jsp:body>
         <h1>Accueil</h1>
+        <div class="row">
+            <h2>Bienvenue ${user.username}</h2>
+        </div>
     </jsp:body>
 </t:layout>

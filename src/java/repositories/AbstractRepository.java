@@ -65,7 +65,7 @@ abstract class AbstractRepository {
     
     private static void startOperation(){
         session = HibernateProvider.getFactory().openSession();
-        t = session.beginTransaction();        
+        t = session.beginTransaction();
     }
 
     protected static boolean delete(Object o) {

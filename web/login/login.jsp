@@ -50,12 +50,12 @@
     <jsp:attribute name="title">Login
     </jsp:attribute>
     <jsp:body>
-        <form class="form-signin">
+        <form class="form-signin" method="post" action="${pageContext.servletContext.contextPath}/login">
             <h2 class="form-signin-heading">Connectez-vous</h2>
             <label for="inputEmail" class="sr-only">Identifiant</label>
-            <input type="email" id="inputEmail" class="form-control" placeholder="ID" required autofocus>
+            <input type="text" id="username" name="username" class="form-control" placeholder="ID" required autofocus>
             <label for="inputPassword" class="sr-only">Mot de passe</label>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Mot de passe" required>
+            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Mot de passe" required>
             <div class="checkbox">
                 <label>
                     <input type="checkbox" value="remember-me"> Se souvenir de moi (7 jours)

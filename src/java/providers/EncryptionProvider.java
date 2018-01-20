@@ -5,6 +5,8 @@
  */
 package providers;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -17,22 +19,25 @@ import java.util.logging.Logger;
  */
 public class EncryptionProvider {
     
-    public static String[] encrypt(String pass){
+    public static String[] encrypt(String pass) {
         byte[] salt = null;
+        String strSalt = "";
         try {
             salt = getSalt();
+            strSalt = String.valueOf(salt);
+            System.out.println("Salt str : " + strSalt);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(EncryptionProvider.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return new String[] {new String(salt), securePassword(pass, salt)};
+        return new String[] { strSalt, securePassword(pass, strSalt)};
     }
     
-    private static String securePassword(String passwordToHash, byte[] salt)
+    private static String securePassword(String passwordToHash, String salt)
     {
         String generatedPassword = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
-            md.update(salt);
+            md.update(salt.getBytes());
             byte[] bytes = md.digest(passwordToHash.getBytes());
             StringBuilder sb = new StringBuilder();
             for(int i=0; i< bytes.length ;i++)
@@ -55,5 +60,14 @@ public class EncryptionProvider {
         byte[] salt = new byte[16];
         sr.nextBytes(salt);
         return salt;
+    }
+    
+    public static boolean verifyPassword(String encodedPass, String pass, String salt){
+        
+        System.out.println("Password : " + encodedPass);
+        System.out.println("Salt : " + salt);
+        String password = securePassword(pass, salt);
+        System.out.println("Input Encripted : " + password);
+        return password.equals(encodedPass);
     }
 }

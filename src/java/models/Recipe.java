@@ -15,12 +15,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 /**
  *
  * @author MaliszewskiDorian
  */
 @Entity
+@Table(name = "Recipes")
 public class Recipe implements Serializable {
 
     private static final long serialVersionUID = 1L;

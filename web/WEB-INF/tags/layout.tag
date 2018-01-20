@@ -87,7 +87,7 @@
                             </div>
                         </li>
                     </ul>
-                    <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/login">Se connecter</a>
+                    <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}${empty user ? "/login" : "/profile"}">${empty user ?"Se connecter" : "Profil"}</a>
                     <form class="form-inline my-2 my-lg-0" action="${pageContext.request.contextPath}/search">
                         <input class="form-control mr-sm-2" placeholder="Rechercher" aria-label="Search" type="text">
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>

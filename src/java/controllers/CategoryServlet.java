@@ -14,8 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Category;
-import org.hibernate.jpa.HibernateEntityManager;
-import providers.HibernateProvider;
 import repositories.CategoryRepository;
 
 /**
