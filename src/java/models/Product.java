@@ -6,11 +6,14 @@
 package models;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -30,6 +33,17 @@ public class Product implements Serializable {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
+    private List<RecipeProduct> recipes;
+
+    public List<RecipeProduct> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(List<RecipeProduct> recipes) {
+        this.recipes = recipes;
+    }
+    
     public Integer getId() {
         return id;
     }

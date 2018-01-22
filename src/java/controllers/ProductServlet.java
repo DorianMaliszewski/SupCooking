@@ -84,6 +84,10 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if(req.getSession().getAttribute("user") == null){
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
         if (req.getPathInfo() != null) {
             switch (req.getPathInfo()) {
                 case "/show":

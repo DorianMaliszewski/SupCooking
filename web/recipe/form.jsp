@@ -7,7 +7,7 @@
     </jsp:attribute>
     <jsp:body>
         
-        <h1>${prefixe} un produit</h1>
+        <h1>${prefixe} une recette</h1>
         <c:choose>
             <c:when test="${!empty recipe}">
                 <form method="post" action="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}">
@@ -17,8 +17,8 @@
             </c:otherwise>
         </c:choose>
         <div class="form-group">
-            <label for="name">Nom du produit</label>
-            <input <c:if test="${!empty recipe}">value="${recipe.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom du produit">
+            <label for="name">Nom de la recette</label>
+            <input <c:if test="${!empty recipe}">value="${recipe.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom de la recette">
             <small id="nameHelp" class="form-text text-muted">3 caractères minimum.</small>
         </div>
         <button type="submit" class="btn btn-primary">${prefixe}</button>

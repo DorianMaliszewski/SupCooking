@@ -6,9 +6,13 @@
 package models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,6 +55,11 @@ public class User implements Serializable {
     
     @Column(name = "remember_me", nullable = true)
     private Boolean rememberMe;
+    
+    @OneToMany(mappedBy = "createdBy", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Recipe> recipes;
+    
+    private String token;
 
     public Boolean getRememberMe() {
         return rememberMe;
@@ -60,18 +69,20 @@ public class User implements Serializable {
         this.rememberMe = rememberMe;
     }
 
-    public Collection<Recipe> getRecipes() {
+    public List<Recipe> getRecipes() {
         return recipes;
     }
 
-    public void setRecipes(Collection<Recipe> recipes) {
+    public void setRecipes(List<Recipe> recipes) {
         this.recipes = recipes;
     }
     
-    private String token;
-    
-    @OneToMany(mappedBy = "createdBy")
-    private Collection<Recipe> recipes;
+    public void addRecipes(Recipe recipe){
+        this.recipes.add(recipe);
+        if(recipe.getCreatedBy() != this){
+            recipe.setCreatedBy(this);
+        }
+    }
     
     public String getUsername() {
         return username;

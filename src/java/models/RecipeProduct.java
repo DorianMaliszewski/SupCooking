@@ -6,13 +6,17 @@
 package models;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 /**
@@ -20,13 +24,19 @@ import javax.persistence.Table;
  * @author MaliszewskiDorian
  */
 @Entity
-@Table(name = "Recipes_Products")
+@Table(name = "recipes_products")
+@IdClass(RecipeProductId.class)
 public class RecipeProduct implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @Column(name = "recipe_id")
+    private Integer recipeId;
+    
+    @Id
+    @Column(name = "product_id")
+    private Integer productId;
 
     @Column(nullable = false)
     private String unit;
@@ -34,10 +44,12 @@ public class RecipeProduct implements Serializable {
     @Column(nullable = false)
     private Integer quantity;
     
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Recipe.class)
+    @ManyToOne
+    @JoinColumn(name = "recipe_id", updatable = false, insertable = false, referencedColumnName = "id")
     private Recipe recipe;
     
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Product.class)
+    @ManyToOne
+    @JoinColumn(name = "product_id", updatable = false, insertable = false, referencedColumnName = "id")
     private Product product;
 
     public String getUnit() {
@@ -47,7 +59,22 @@ public class RecipeProduct implements Serializable {
     public void setUnit(String unit) {
         this.unit = unit;
     }
+    
+    public Integer getRecipeId() {
+        return recipeId;
+    }
 
+    public void setRecipeId(Integer recipeId) {
+        this.recipeId = recipeId;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
     public Integer getQuantity() {
         return quantity;
     }
@@ -72,38 +99,25 @@ public class RecipeProduct implements Serializable {
         this.product = product;
     }
     
-    
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
-        return hash;
+        return (int)(recipeId + productId);
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof RecipeProduct)) {
-            return false;
-        }
-        RecipeProduct other = (RecipeProduct) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+      if (object instanceof RecipeProduct) {
+        RecipeProduct otherId = (RecipeProduct) object;
+        return (Objects.equals(otherId.recipeId, this.recipeId)) && (Objects.equals(otherId.productId, this.productId));
+      }
+      return false;
     }
+
 
     @Override
     public String toString() {
-        return "models.RecipeProduct[ id=" + id + " ]";
+        return "models.RecipeProductId[ recipeId=" + recipeId + " productId="+ productId +" ]";
     }
     
 }

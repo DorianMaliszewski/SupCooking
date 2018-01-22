@@ -20,7 +20,18 @@ import providers.HibernateProvider;
  */
 public class UserRepository {
     public static User find(int id) {
-        return (User) AbstractRepository.find(User.class, id);
+        List objs = null;
+        Session session = HibernateProvider.getFactory().openSession();
+        try {
+            Transaction t = session.beginTransaction();
+            objs = session.createQuery("SELECT u FROM Users u LEFT JOIN FETCH u.recipe").list();
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return (User)objs;
     }
 
     public static List findAll() {

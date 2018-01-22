@@ -94,7 +94,6 @@ public class LoginServlet extends HttpServlet {
             rd.forward(request, response);
             return;
         }
-        System.out.println("User find : " + user.getUsername());
         
         if(EncryptionProvider.verifyPassword(user.getPassword(), pass, user.getSalt())){
             request.getSession().setAttribute("user", user);

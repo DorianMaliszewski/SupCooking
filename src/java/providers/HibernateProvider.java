@@ -1,6 +1,5 @@
 package providers;
 
-import models.Recipe;
 import models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

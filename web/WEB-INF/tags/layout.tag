@@ -4,8 +4,8 @@
     Author     : MaliszewskiDorian
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@tag description="Page template" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <%@attribute name="title" %>
 <!DOCTYPE html>
@@ -79,13 +79,15 @@
                         <li class="nav-item">
                             <a class="nav-link" href="${pageContext.request.contextPath}/recipes/product">Par produits</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Administration</a>
-                            <div class="dropdown-menu" aria-labelledby="dropdown01">
-                                <a class="dropdown-item" href="${pageContext.request.contextPath}/products">Produits</a>
-                                <a class="dropdown-item" href="${pageContext.request.contextPath}/categories">Categories</a>
-                            </div>
-                        </li>
+                        <c:if test="${!empty user}">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Administration</a>
+                                <div class="dropdown-menu" aria-labelledby="dropdown01">
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/products">Produits</a>
+                                    <a class="dropdown-item" href="${pageContext.request.contextPath}/categories">Categories</a>
+                                </div>
+                            </li>
+                        </c:if>
                     </ul>
                     <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}${empty user ? "/login" : "/profile"}">${empty user ?"Se connecter" : "Profil"}</a>
                     <form class="form-inline my-2 my-lg-0" action="${pageContext.request.contextPath}/search">

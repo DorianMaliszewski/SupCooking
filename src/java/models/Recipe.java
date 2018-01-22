@@ -6,10 +6,12 @@
 package models;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -56,11 +58,11 @@ public class Recipe implements Serializable {
     @Column(name = "number_of_view")
     private Long numberOfView;
     
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = User.class)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = User.class)
     private User createdBy;
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
-    private Collection<Product> products;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe", fetch = FetchType.LAZY)
+    private List<RecipeProduct> products;
     
     @ManyToOne(cascade = CascadeType.ALL, targetEntity = Category.class)
     private Category category;
@@ -79,13 +81,32 @@ public class Recipe implements Serializable {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+        if(!createdBy.getRecipes().contains(this)){
+            createdBy.getRecipes().add(this);
+        }
     }
 
-    public Collection<Product> getProducts() {
+    public List<RecipeProduct> getProducts() {
         return products;
     }
 
-    public void setProducts(Collection<Product> products) {
+    public void addProduct(Product product, Integer quantity, String unit) {
+        RecipeProduct association = new RecipeProduct();
+        association.setProduct(product);
+        association.setRecipe(this);
+        association.setProductId(product.getId());
+        association.setRecipeId(this.getId());
+        association.setQuantity(quantity);
+        association.setUnit(unit);
+        if(this.products == null)
+           this.products = new ArrayList<>();
+
+        this.products.add(association);
+            // Also add the association object to the employee.
+            product.getRecipes().add(association);
+        }
+    
+    public void setProducts(List<RecipeProduct> products) {
         this.products = products;
     }
     
@@ -176,6 +197,7 @@ public class Recipe implements Serializable {
         return hash;
     }
 
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set

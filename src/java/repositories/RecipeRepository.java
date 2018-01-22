@@ -7,6 +7,10 @@ package repositories;
 
 import java.util.List;
 import models.Recipe;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import providers.HibernateProvider;
 
 /**
  *
@@ -18,7 +22,18 @@ public class RecipeRepository extends AbstractRepository {
     }
     
     public static List findAll(){
-        return AbstractRepository.findAll(Recipe.class);
+        List objs = null;
+        Session session = HibernateProvider.getFactory().openSession();
+        try {
+            Transaction t = session.beginTransaction();
+            objs = session.createQuery("SELECT r FROM Recipes r LEFT JOIN FETCH r.createdBy").list();
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return objs;
     }
    
     public static boolean add(Recipe r) {

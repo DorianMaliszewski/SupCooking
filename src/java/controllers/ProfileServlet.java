@@ -6,7 +6,6 @@
 package controllers;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -19,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author dorian
  */
-@WebServlet(name = "ProfileServlet", urlPatterns = {"/profile/*"})
+@WebServlet(name = "Profile", urlPatterns = {"/profile/*"})
 public class ProfileServlet extends HttpServlet {
 
     /**
@@ -34,7 +33,7 @@ public class ProfileServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String url = "/profile/index.jsp";
+        String url = "/profil/index.jsp";
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
@@ -83,6 +82,7 @@ public class ProfileServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if(req.getSession().getAttribute("user") == null){
             resp.sendRedirect(req.getContextPath() + "/login");
+            return;
         }
         super.service(req, resp); //To change body of generated methods, choose Tools | Templates.
     }

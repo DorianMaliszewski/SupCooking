@@ -52,5 +52,6 @@ Contributor(s):
     <mapping class="models.Category"/>
     <mapping class="models.Product"/>
     <mapping class="models.User"/>
+    <mapping class="models.RecipeProduct"/>
   </session-factory>
 </hibernate-configuration>

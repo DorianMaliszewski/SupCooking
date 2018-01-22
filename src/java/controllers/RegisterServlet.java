@@ -89,8 +89,6 @@ public class RegisterServlet extends HttpServlet {
             String[] saltAndPassEncrypted = EncryptionProvider.encrypt(pass);
             u.setPassword(saltAndPassEncrypted[1]);
             u.setSalt(saltAndPassEncrypted[0]);
-            System.out.println("Password : " + saltAndPassEncrypted[1]);
-            System.out.println("Salt : " + saltAndPassEncrypted[0]);
             UserRepository.add(u);
         }
         catch(NullPointerException e)

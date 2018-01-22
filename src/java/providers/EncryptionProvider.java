@@ -25,7 +25,6 @@ public class EncryptionProvider {
         try {
             salt = getSalt();
             strSalt = String.valueOf(salt);
-            System.out.println("Salt str : " + strSalt);
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(EncryptionProvider.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -63,11 +62,7 @@ public class EncryptionProvider {
     }
     
     public static boolean verifyPassword(String encodedPass, String pass, String salt){
-        
-        System.out.println("Password : " + encodedPass);
-        System.out.println("Salt : " + salt);
         String password = securePassword(pass, salt);
-        System.out.println("Input Encripted : " + password);
         return password.equals(encodedPass);
     }
 }

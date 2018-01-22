@@ -155,6 +155,10 @@ public class RecipeServlet extends HttpServlet {
     }
 
     private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if(request.getSession().getAttribute("user") == null){
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
         if (request.getMethod().equals("POST")) {
             response.setContentType("text/html;charset=UTF-8");
             Recipe recipe = new Recipe();
@@ -191,6 +195,10 @@ public class RecipeServlet extends HttpServlet {
     }
 
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if(request.getSession().getAttribute("user") == null){
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
@@ -218,6 +226,10 @@ public class RecipeServlet extends HttpServlet {
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if(request.getSession().getAttribute("user") == null){
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
