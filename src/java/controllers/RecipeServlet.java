@@ -186,6 +186,8 @@ public class RecipeServlet extends HttpServlet {
             request.getSession().setAttribute("message", message);
             response.sendRedirect(request.getContextPath() + request.getServletPath());
         } else {
+            request.setAttribute("categories", CategoryRepository.findAll());
+            request.setAttribute("products", ProductRepository.findAll());
             response.setContentType("text/html;charset=UTF-8");
             String url = VIEW_PATH + "/form.jsp";
             ServletContext sc = getServletContext();

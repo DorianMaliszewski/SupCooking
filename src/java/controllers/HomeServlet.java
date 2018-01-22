@@ -91,6 +91,14 @@ public class HomeServlet extends HttpServlet {
     }
 
     private void search(HttpServletRequest request, HttpServletResponse response) throws ServletException,  IOException{
+        
+        if(request.getParameter("s") == null){
+            response.sendRedirect(request.getContextPath());
+            request.getSession().setAttribute("message", "Renseingez un text de recherche");
+            request.getSession().setAttribute("success", false);
+            return;
+        }
+        
         response.setContentType("text/html;charset=UTF-8");
         String url = "/search.jsp";
         ServletContext sc = getServletContext();
