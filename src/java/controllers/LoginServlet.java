@@ -21,7 +21,7 @@ import repositories.UserRepository;
  *
  * @author MaliszewskiDorian
  */
-@WebServlet(name = "Login", urlPatterns = "/login")
+@WebServlet(name = "Login", urlPatterns = {"/login","/logout"})
 public class LoginServlet extends HttpServlet {
 
     /**
@@ -57,6 +57,8 @@ public class LoginServlet extends HttpServlet {
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
+        request.getSession().setAttribute("success", null);
+        request.getSession().setAttribute("message", null);
     }
 
     /**
@@ -91,7 +93,9 @@ public class LoginServlet extends HttpServlet {
             String url = "/login/login.jsp";
             ServletContext sc = getServletContext();
             RequestDispatcher rd = sc.getRequestDispatcher(url);
-            rd.forward(request, response);
+            request.getSession().setAttribute("success", false);
+            request.getSession().setAttribute("message", "Identifiant incorrect");
+            response.sendRedirect(request.getContextPath() + request.getServletPath()); 
             return;
         }
         
@@ -102,6 +106,8 @@ public class LoginServlet extends HttpServlet {
         else
         {
             System.out.println("Les identifiants ne correspondent pas");
+            request.getSession().setAttribute("success", false);
+            request.getSession().setAttribute("message", "Identifiant incorrect");
             response.sendRedirect(request.getContextPath() + request.getServletPath());           
         }
     }
@@ -115,4 +121,21 @@ public class LoginServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if(req.getServletPath().equals("/logout")){
+            this.logout(req,resp);
+        }else{
+           super.service(req, resp);
+        }
+        return;
+    }
+
+    private void logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+       req.getSession().invalidate();
+       resp.sendRedirect(req.getContextPath());
+    }
+    
+    
 }

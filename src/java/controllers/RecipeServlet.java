@@ -6,15 +6,17 @@
 package controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import models.Product;
 import models.Recipe;
 import models.User;
 import repositories.CategoryRepository;
@@ -26,6 +28,7 @@ import repositories.RecipeRepository;
  * @author MaliszewskiDorian
  */
 @WebServlet(name = "Recipe", urlPatterns = "/recipes/*")
+@MultipartConfig
 public class RecipeServlet extends HttpServlet {
     
     private final String VIEW_PATH = "/recipe/";
@@ -42,11 +45,7 @@ public class RecipeServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("recipes", RecipeRepository.findAll());
-        response.setContentType("text/html;charset=UTF-8");
-        String url = VIEW_PATH + "index.jsp";
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher(url);
-        rd.forward(request, response);
+        this.forward(request, response, "index.jsp");
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -90,20 +89,11 @@ public class RecipeServlet extends HttpServlet {
 
     private void indexByCategorie(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("recipes", RecipeRepository.findAll());
-        response.setContentType("text/html;charset=UTF-8");
-        String url = "/recipe/indexByCategory.jsp";
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher(url);
-        rd.forward(request, response);
+        this.forward(request, response, "indexByCategory.jsp");
     }
 
     private void indexByRecipe(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("recipes", RecipeRepository.findAll());
-        response.setContentType("text/html;charset=UTF-8");
-        String url = "/recipe/indexByRecipe.jsp";
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher(url);
-        rd.forward(request, response);
+        this.forward(request, response, "indexByRecipe.jsp");
     }
     
     @Override
@@ -120,12 +110,24 @@ public class RecipeServlet extends HttpServlet {
                     show(req, resp);
                     break;
                 case "/add":
+                    if(req.getSession().getAttribute("user") == null){
+                        resp.sendRedirect(req.getContextPath() + "/login");
+                        return;
+                    }
                     add(req, resp);
                     break;
                 case "/edit":
+                    if(req.getSession().getAttribute("user") == null){
+                        resp.sendRedirect(req.getContextPath() + "/login");
+                        return;
+                    }
                     edit(req, resp);
                     break;
                 case "/delete":
+                    if(req.getSession().getAttribute("user") == null){
+                        resp.sendRedirect(req.getContextPath() + "/login");
+                        return;
+                    }
                     delete(req, resp);
                     break;
                 default:
@@ -147,60 +149,36 @@ public class RecipeServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
-        response.setContentType("text/html;charset=UTF-8");
-        String url = VIEW_PATH + "detail.jsp";
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher(url);
-        rd.forward(request, response);
+        request.setAttribute("recipe", recipe);
+        this.forward(request, response, "detail.jsp");
     }
 
     private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if(request.getSession().getAttribute("user") == null){
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
         if (request.getMethod().equals("POST")) {
-            response.setContentType("text/html;charset=UTF-8");
             Recipe recipe = new Recipe();
+            System.out.println("controllers.RecipeServlet.add() POST");
             boolean success = true;
             try{
-            recipe.setName(request.getParameter("name"));
-            recipe.setCreatedBy((User)request.getSession().getAttribute("user"));
-            recipe.setDescription(request.getParameter("description"));
-            recipe.setImage(request.getParameter("image"));
-            recipe.setCookingTime(Integer.parseInt(request.getParameter("cookingTime")));
-            recipe.setPreparationTime(Integer.parseInt(request.getParameter("preparationTime")));
-            recipe.setCategory(CategoryRepository.find(Integer.parseInt(request.getParameter("category_id"))));
-            for(Product p : (ArrayList<Product>)ProductRepository.findAll()){
-                
-            }
-            success = RecipeRepository.add(recipe);
+                success = RecipeRepository.add(fillRecipe(recipe, request));
+                System.out.println("Succes ? " + (success ? "OUI":"NON"));
             }
             catch(Exception e)
             {
+                e.printStackTrace();
                 System.err.println(e.getMessage());
                 success = false;
             }
             String message = success ? "L'élément à bien été ajouté" : "Erreur lors de la création de l'élément";
-            request.getSession().setAttribute("success", success);
-            request.getSession().setAttribute("message", message);
+            this.setFlashBag(message, success, request);
             response.sendRedirect(request.getContextPath() + request.getServletPath());
         } else {
             request.setAttribute("categories", CategoryRepository.findAll());
             request.setAttribute("products", ProductRepository.findAll());
-            response.setContentType("text/html;charset=UTF-8");
-            String url = VIEW_PATH + "/form.jsp";
-            ServletContext sc = getServletContext();
-            RequestDispatcher rd = sc.getRequestDispatcher(url);
-            rd.forward(request, response);
+            this.forward(request, response, "form.jsp");
         }
     }
 
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if(request.getSession().getAttribute("user") == null){
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
@@ -214,24 +192,14 @@ public class RecipeServlet extends HttpServlet {
             recipe.setName(request.getParameter("name"));
             boolean success = RecipeRepository.edit(recipe);
             String message = success ? "Modification réussie" : "Erreur lors de l'enregistrement";
-            request.getSession().setAttribute("success", success);
-            request.getSession().setAttribute("message", message);
+            this.setFlashBag(message, success, request);
             response.sendRedirect(request.getContextPath() + request.getServletPath());
         } else {
             request.setAttribute("recipe", recipe);
-            response.setContentType("text/html;charset=UTF-8");
-            String url = VIEW_PATH + "form.jsp";
-            ServletContext sc = getServletContext();
-            RequestDispatcher rd = sc.getRequestDispatcher(url);
-            rd.forward(request, response);
         }
     }
 
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if(request.getSession().getAttribute("user") == null){
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
@@ -239,12 +207,59 @@ public class RecipeServlet extends HttpServlet {
         Recipe recipe = RecipeRepository.find(Integer.parseInt(request.getParameter("id")));
         if (request.getMethod().equals("POST") && recipe != null) {
             boolean success = RecipeRepository.delete(recipe);
-            String message = success ? "Suppresion réussie" : "Erreur lors de la suppresion";
-            request.getSession().setAttribute("success", success);
-            request.getSession().setAttribute("message", message);
-
+            String message = success ? "Suppression réussie" : "Erreur lors de la suppresion";
+            this.setFlashBag(message, success, request);
         }
         response.sendRedirect(request.getContextPath() + request.getServletPath());
+    }
+    
+    private Recipe fillRecipe(Recipe recipe, HttpServletRequest request) throws NullPointerException, Exception{
+        Map m=request.getParameterMap();
+        Set s = m.entrySet();
+        Iterator it = s.iterator();
+            System.out.println("controllers.RecipeServlet.fillRecipe()");
+            while(it.hasNext()){
+                Map.Entry<String,String[]> entry = (Map.Entry<String,String[]>)it.next();
+                String key             = entry.getKey();
+                String[] value         = entry.getValue();
+ 
+                System.out.println("Key is "+key+"");
+                    if(value.length>1){    
+                        for (int i = 0; i < value.length; i++) {
+                            System.out.println(value[i].toString());
+                        }
+                    }else System.out.println("Value is "+value[0].toString());
+                    System.out.println("-------------------");
+        }
+        recipe.setName(request.getParameter("name"));
+        recipe.setCreatedBy((User)request.getSession().getAttribute("user"));
+        recipe.setDescription(request.getParameter("description"));
+        recipe.setImage(request.getParameter("image"));
+        recipe.setCookingTime(Integer.parseInt(request.getParameter("cookingTime")));
+        recipe.setPreparationTime(Integer.parseInt(request.getParameter("preparationTime")));
+        recipe.setCategory(CategoryRepository.find(Integer.parseInt(request.getParameter("category_id"))));
+        int i = 0 ;
+        while(request.getParameter("product_" + i + "[]") != null){
+            String[] values = request.getParameterValues("product_" + i + "[]");
+            recipe.addProduct(ProductRepository.find(Integer.valueOf(values[0])), Float.valueOf(values[1]), values[2]);
+            i++;
+        }
+        return recipe;
+    }
+    
+    private void setFlashBag(String message, Boolean success, HttpServletRequest request){
+        request.getSession().setAttribute("success", success);
+        request.getSession().setAttribute("message", message);
+    }
+    
+    private void forward(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException{
+        response.setContentType("text/html;charset=UTF-8");
+        String url = VIEW_PATH + view;
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(url);
+        rd.forward(request, response);
+        request.getSession().setAttribute("message", null);
+        request.getSession().setAttribute("success", null);
     }
     
 }

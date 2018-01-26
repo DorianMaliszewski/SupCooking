@@ -10,20 +10,6 @@
     <jsp:attribute name="title">Profil
     </jsp:attribute>
     <jsp:body>
-        <c:if test="${!empty message}">
-            <c:choose>
-                <c:when test="${!empty success}">
-                    <div class="alert alert-${success == true ? "success" : "danger"}" role="alert">
-                        ${message}
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="alert alert-info" role="alert">
-                        ${message}
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </c:if>
         <h1>${user.firstName}&nbsp;${user.lastName}</h1>
         <div class="row">
             <div class="col-md-4">

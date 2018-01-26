@@ -10,11 +10,10 @@
     <jsp:attribute name="title">Home
     </jsp:attribute>
     <jsp:body>
-        <h1>Accueil</h1>
-        <c:if test="${!empty user}">
-            <div class="row">
-                <h2>Bienvenue ${user.username}</h2>
-            </div>
-        </c:if>
+        <div class="jumbotron">
+            <h1 class="display-4">SupCooking c'est...</h1>
+            <p class="lead">${recipesNumber} recettes en ligne</p>
+            <p class='lead'>${usersNumber} utilisateurs inscrits</p>
+        </div>
     </jsp:body>
 </t:layout>

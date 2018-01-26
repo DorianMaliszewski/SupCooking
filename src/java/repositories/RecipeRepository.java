@@ -26,7 +26,7 @@ public class RecipeRepository extends AbstractRepository {
         Session session = HibernateProvider.getFactory().openSession();
         try {
             Transaction t = session.beginTransaction();
-            objs = session.createQuery("SELECT r FROM Recipes r LEFT JOIN FETCH r.createdBy").list();
+            objs = session.createQuery("SELECT r FROM Recipe r LEFT JOIN FETCH r.createdBy").list();
             t.commit();
         } catch (HibernateException e) {
             System.err.println(e.getMessage());

@@ -18,6 +18,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.annotations.Proxy;
 
 /**
  * Model de la classe utilisateur
@@ -25,6 +28,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "Users")
+@XmlRootElement
+@Proxy(lazy=false)
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -69,6 +74,7 @@ public class User implements Serializable {
         this.rememberMe = rememberMe;
     }
 
+    @XmlTransient
     public List<Recipe> getRecipes() {
         return recipes;
     }

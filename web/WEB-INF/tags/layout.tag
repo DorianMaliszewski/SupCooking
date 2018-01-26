@@ -89,7 +89,15 @@
                             </li>
                         </c:if>
                     </ul>
-                    <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}${empty user ? "/login" : "/profile"}">${empty user ?"Se connecter" : "Profil"}</a>
+                    <c:choose>
+                        <c:when test="${!empty user}">
+                            <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/profile">Profil</a>
+                            <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/logout">Se déconnecter</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/login">Se connecter</a>
+                        </c:otherwise>
+                    </c:choose>
                     <form class="form-inline my-2 my-lg-0" action="${pageContext.request.contextPath}/search">
                         <input class="form-control mr-sm-2" placeholder="Rechercher" aria-label="Search" type="text">
                         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
@@ -98,6 +106,20 @@
             </nav>
         </header>
         <main role="main" class="container">
+            <c:if test="${message != null}">
+                <c:choose>
+                    <c:when test="${success != null}">
+                        <div class="alert alert-${success == true ? "success" : "danger"}" role="alert">
+                            ${message}
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="alert alert-info" role="alert">
+                            ${message}
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </c:if>
             <jsp:doBody/>
         </main>
         <footer class="footer">

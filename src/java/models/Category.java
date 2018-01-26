@@ -7,6 +7,7 @@ package models;
 
 import java.io.Serializable;
 import java.util.Collection;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.Proxy;
 
 /**
  *
@@ -21,6 +24,8 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "Categories")
+@XmlRootElement
+@Proxy(lazy=false)
 public class Category implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -31,7 +36,7 @@ public class Category implements Serializable {
     @Column(nullable = false)
     private String name;
     
-    @OneToMany(mappedBy = "category", targetEntity = Recipe.class)
+    @OneToMany(mappedBy = "category", targetEntity = Recipe.class, cascade = CascadeType.PERSIST)
     private Collection<Recipe> recipes;
 
     public String getName() {

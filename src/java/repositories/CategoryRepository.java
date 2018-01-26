@@ -22,7 +22,18 @@ public class CategoryRepository extends AbstractRepository {
     }
 
     public static List findAll() {
-        return AbstractRepository.findAll(Category.class);
+        List objs = null;
+        Session session = HibernateProvider.getFactory().openSession();
+        try {
+            Transaction t = session.beginTransaction();
+            objs = session.createQuery("SELECT c FROM Category c LEFT JOIN FETCH c.recipes").list();
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return objs;
     }
 
     public static boolean add(Category category) {

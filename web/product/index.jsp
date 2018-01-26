@@ -10,20 +10,6 @@
     <jsp:attribute name="title">Produits
     </jsp:attribute>
     <jsp:body>
-        <c:if test="${!empty message}">
-            <c:choose>
-                <c:when test="${!empty success}">
-                    <div class="alert alert-${success == true ? "success" : "danger"}" role="alert">
-                        ${message}
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <div class="alert alert-info" role="alert">
-                        ${message}
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </c:if>
         <h1>Tous les produits</h1>
         <div class="table-responsive">
             <table class="table">

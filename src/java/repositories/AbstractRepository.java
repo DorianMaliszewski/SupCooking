@@ -52,7 +52,7 @@ abstract class AbstractRepository {
         boolean success = true;
         try {
             startOperation();
-            session.persist(o);
+            session.saveOrUpdate(o);
             t.commit();
         } catch (HibernateException e) {
             System.err.println(e.getMessage());
@@ -63,7 +63,7 @@ abstract class AbstractRepository {
         return success;
     }
     
-    private static void startOperation(){
+    protected static void startOperation(){
         session = HibernateProvider.getFactory().openSession();
         t = session.beginTransaction();
     }

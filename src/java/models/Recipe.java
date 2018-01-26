@@ -18,6 +18,9 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.annotations.Proxy;
 
 /**
  *
@@ -25,6 +28,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "Recipes")
+@XmlRootElement
 public class Recipe implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -61,10 +65,10 @@ public class Recipe implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = User.class)
     private User createdBy;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "recipe", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "recipe", fetch = FetchType.EAGER)
     private List<RecipeProduct> products;
     
-    @ManyToOne(cascade = CascadeType.ALL, targetEntity = Category.class)
+    @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = Category.class)
     private Category category;
 
     public Category getCategory() {
@@ -86,11 +90,12 @@ public class Recipe implements Serializable {
         }
     }
 
+    @XmlTransient
     public List<RecipeProduct> getProducts() {
         return products;
     }
 
-    public void addProduct(Product product, Integer quantity, String unit) {
+    public void addProduct(Product product, Float quantity, String unit) {
         RecipeProduct association = new RecipeProduct();
         association.setProduct(product);
         association.setRecipe(this);
@@ -102,9 +107,8 @@ public class Recipe implements Serializable {
            this.products = new ArrayList<>();
 
         this.products.add(association);
-            // Also add the association object to the employee.
-            product.getRecipes().add(association);
-        }
+        product.getRecipes().add(association);
+    }
     
     public void setProducts(List<RecipeProduct> products) {
         this.products = products;

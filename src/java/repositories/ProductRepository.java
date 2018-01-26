@@ -7,17 +7,44 @@ package repositories;
 
 import java.util.List;
 import models.Product;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import providers.HibernateProvider;
 /**
  *
  * @author MaliszewskiDorian
  */
 public class ProductRepository {
+    
     public static Product find(int id) {
-        return (Product) AbstractRepository.find(Product.class, id);
+        Object obj = null;
+        Session session = HibernateProvider.getFactory().openSession();
+        try {
+            Transaction t = session.beginTransaction();
+            obj = session.get(Product.class, id);
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return (Product)obj;
     }
 
     public static List findAll() {
-        return AbstractRepository.findAll(Product.class);
+        List objs = null;
+        Session session = HibernateProvider.getFactory().openSession();
+        try {
+            Transaction t = session.beginTransaction();
+            objs = session.createQuery("SELECT p FROM Product p LEFT JOIN FETCH p.recipes").list();
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            session.close();
+        }
+        return objs;
     }
     
     public static boolean add(Product p) {
