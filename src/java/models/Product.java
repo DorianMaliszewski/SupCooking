@@ -6,6 +6,7 @@
 package models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,16 +32,15 @@ public class Product implements Serializable {
     private static final long serialVersionUID = 1L;
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "product")
-    private List<RecipeProduct> recipes;
+    @OneToMany(mappedBy = "product")
+    private List<RecipeProduct> recipes = new ArrayList<RecipeProduct>();
 
-    @XmlTransient
     public List<RecipeProduct> getRecipes() {
         return recipes;
     }

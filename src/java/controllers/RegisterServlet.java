@@ -90,6 +90,7 @@ public class RegisterServlet extends HttpServlet {
             u.setPassword(saltAndPassEncrypted[1]);
             u.setSalt(saltAndPassEncrypted[0]);
             UserRepository.add(u);
+            request.getSession().setAttribute("user", u);
         }
         catch(NullPointerException e)
         {

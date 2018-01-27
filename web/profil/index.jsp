@@ -35,7 +35,7 @@
                 Nombre de recettes publiées :
             </div>
             <div class="col-md-8">
-                ${fn: length(user.recipes)}
+                ${fn:length(user.recipes)}
             </div>
         </div>
             <hr>

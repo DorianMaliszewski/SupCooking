@@ -5,7 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@tag description="Page template" pageEncoding="UTF-8"%>
+<%@tag description="Page template" pageEncoding="utf-8"%>
 
 <%@attribute name="title" %>
 <!DOCTYPE html>
