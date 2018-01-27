@@ -48,11 +48,14 @@ Contributor(s):
     <property name="hibernate.connection.password">postgres</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.show_sql">true</property>
+    <property name="hibernate.current_session_context_class">thread</property>
+    <property name="hibernate.transaction.flush_before_completion">true</property>
     <property name="hibernate.connection.autocommit">true</property>
     <mapping class="models.Recipe"/>
     <mapping class="models.Category"/>
     <mapping class="models.Product"/>
     <mapping class="models.User"/>
     <mapping class="models.RecipeProduct"/>
+    <mapping class="models.RecipeProductId"/>
   </session-factory>
 </hibernate-configuration>

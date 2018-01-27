@@ -19,13 +19,13 @@
         </c:choose>
             <div class="form-group">
                 <label for="name">Nom de la recette</label>
-                <input <c:if test="${!empty recipe}">value="${recipe.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom de la recette">
+                <input <c:if test="${!empty recipe}">value="${recipe.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom de la recette"/>
                 <small id="nameHelp" class="form-text text-muted">3 caractères minimum.</small>
             </div>
 
             <div class="form-group">
                 <label for="image">Image</label>
-                <input <c:if test="${!empty recipe}">value="${recipe.image}"</c:if> type="file" class="form-control" id="name" name="image" aria-describedby="imageHelp" placeholder="Nom de la recette">
+                <input <c:if test="${!empty recipe}">value="${recipe.image}"</c:if> type="file" class="form-control" id="image" name="image" aria-describedby="imageHelp" placeholder="Nom de la recette"/>
                 <small id="imageHelp" class="form-text text-muted">Une image est requise.</small>
             </div>
 
@@ -53,9 +53,7 @@
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea placeholder="Description de la recette" form="recipeFrom" class="form-control" >
-                    <c:if test="${!empty recipe}">${recipe.name}</c:if>
-                </textarea>
+                <textarea placeholder="Description de la recette" form="recipeForm" name="description" class="form-control" >${!empty recipe ? recipe.description : null}</textarea>
                 <small id="descriptionHelp" class="form-text text-muted">Il faut une description de la recette.</small>
             </div>
             <div id="divProducts">
@@ -64,28 +62,28 @@
                     <c:choose>
                         <c:when test="${!empty recipe.products}">
                             <c:forEach var="produit" items="${recipe.products}" varStatus="loop">
-                                <c:set scope="page" var="compteur" value="${loop}"/>
+                                <c:set scope="page" var="compteur" value="${loop.index}"/>
                                 <div class="form-group col-7">
                                 <select name="product_${loop.index}[]" class="form-control" >
                                     <option>Sélectionnez</option>
                                     <c:forEach var="p" items="${products}">
-                                        <option value="${p.id}">${p.name}</option>
+                                        <option value="${p.id}" ${produit.product.id == p.id ? "selected" : ""}>${p.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
                             <div class="col form-group">
-                                <input type="number" step="0.1" class="form-control" name="product_${loop.index}[]" placeholder="Quantite"/>
+                                <input type="number" step="0.1" class="form-control" name="product_${loop.index}[]" placeholder="Quantite" value='${produit.quantity}'/>
                             </div>
                             <div class="col form-group">
                                 <select name="product_${loop.index}[]" class="form-control" >
-                                    <option>Sélectionnez l'unité</option>
-                                    <option value="mg">mg</option>
-                                    <option value="g">g</option>
-                                    <option value="kg">kg</option>
-                                    <option value="mL">mL</option>
-                                    <option value="l">L</option>
-                                    <option value="cas">Cuillère à soupe</option>
-                                    <option value="cac">Cuillère à café</option>
+                                    <option>                                                        Sélectionnez l'unité  </option>
+                                    <option value="mg"  ${produit.unit == "mg" ? "selected" : ""}>  mg                    </option>
+                                    <option value="g"   ${produit.unit == "mg" ? "selected" : ""}>  g                     </option>
+                                    <option value="kg"  ${produit.unit == "mg" ? "selected" : ""}>  kg                    </option>
+                                    <option value="mL"  ${produit.unit == "mg" ? "selected" : ""}>  mL                    </option>
+                                    <option value="l"   ${produit.unit == "mg" ? "selected" : ""}>  L                     </option>
+                                    <option value="cas" ${produit.unit == "mg" ? "selected" : ""}>  Cuillère à soupe      </option>
+                                    <option value="cac" ${produit.unit == "mg" ? "selected" : ""}>  Cuillère à café       </option>
                                 </select>
                             </div>
                             </c:forEach>

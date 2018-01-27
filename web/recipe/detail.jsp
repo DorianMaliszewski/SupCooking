@@ -4,8 +4,10 @@
     Author     : MaliszewskiDorian
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
 
 <t:layout>
     <jsp:attribute name="title">${recipe.name}
@@ -91,6 +93,21 @@
             <div class="col-md-8">
                 ${recipe.preparationTime} minutes
             </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                Nombre d'ingrédient
+            </div>
+            <div class="col-md-8">
+                ${fn:length(recipe.products)}
+            </div>
+        </div>
+            <hr>
+        <div class="row">
+            <h3>Ingrédients</h3>
+            <c:forEach items="${recipe.products}" var="product">
+                <p>${product.product.name}</p>
+            </c:forEach>
         </div>
     </jsp:body>
 </t:layout>

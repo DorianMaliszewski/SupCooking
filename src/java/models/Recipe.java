@@ -15,12 +15,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import org.hibernate.annotations.Proxy;
 
 /**
  *
@@ -36,13 +36,10 @@ public class Recipe implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
     private String name;
     
-    @Column(nullable = false)
     private String description;
     
-    @Column(nullable = false)
     private String image;
     
     @Column(name = "cooking_time")
@@ -62,13 +59,15 @@ public class Recipe implements Serializable {
     @Column(name = "number_of_view")
     private Long numberOfView;
     
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = User.class)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "created_by")
     private User createdBy;
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "recipe", fetch = FetchType.EAGER)
-    private List<RecipeProduct> products;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST)
+    private List<RecipeProduct> products = new ArrayList<RecipeProduct>();
     
-    @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = Category.class)
+    @ManyToOne
+    @JoinColumn(name = "category_id")
     private Category category;
 
     public Category getCategory() {
@@ -85,9 +84,6 @@ public class Recipe implements Serializable {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
-        if(!createdBy.getRecipes().contains(this)){
-            createdBy.getRecipes().add(this);
-        }
     }
 
     @XmlTransient
@@ -109,6 +105,7 @@ public class Recipe implements Serializable {
         this.products.add(association);
         product.getRecipes().add(association);
     }
+    
     
     public void setProducts(List<RecipeProduct> products) {
         this.products = products;

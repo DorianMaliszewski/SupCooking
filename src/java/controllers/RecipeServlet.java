@@ -6,9 +6,9 @@
 package controllers;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -17,7 +17,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import models.Product;
 import models.Recipe;
+import models.RecipeProduct;
 import models.User;
 import repositories.CategoryRepository;
 import repositories.ProductRepository;
@@ -98,6 +100,7 @@ public class RecipeServlet extends HttpServlet {
     
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
         if (req.getPathInfo() != null) {
             switch (req.getPathInfo()) {
                 case "/categories":
@@ -160,7 +163,6 @@ public class RecipeServlet extends HttpServlet {
             boolean success = true;
             try{
                 success = RecipeRepository.add(fillRecipe(recipe, request));
-                System.out.println("Succes ? " + (success ? "OUI":"NON"));
             }
             catch(Exception e)
             {
@@ -184,18 +186,21 @@ public class RecipeServlet extends HttpServlet {
             return;
         }
         Recipe recipe = RecipeRepository.find(Integer.parseInt(request.getParameter("id")));
-        if (request.getMethod().equals("POST")) {
-            response.setContentType("text/html;charset=UTF-8");
-            if (recipe == null) {
-                recipe = new Recipe();
+        if (request.getMethod().equals("POST") && recipe != null) {
+            try {
+                fillRecipe(recipe, request);
+            } catch (Exception ex) {
+                Logger.getLogger(RecipeServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            recipe.setName(request.getParameter("name"));
             boolean success = RecipeRepository.edit(recipe);
             String message = success ? "Modification réussie" : "Erreur lors de l'enregistrement";
             this.setFlashBag(message, success, request);
             response.sendRedirect(request.getContextPath() + request.getServletPath());
         } else {
             request.setAttribute("recipe", recipe);
+            request.setAttribute("categories", CategoryRepository.findAll());
+            request.setAttribute("products", ProductRepository.findAll());
+            this.forward(request, response, "form.jsp");
         }
     }
 
@@ -214,31 +219,18 @@ public class RecipeServlet extends HttpServlet {
     }
     
     private Recipe fillRecipe(Recipe recipe, HttpServletRequest request) throws NullPointerException, Exception{
-        Map m=request.getParameterMap();
-        Set s = m.entrySet();
-        Iterator it = s.iterator();
-            System.out.println("controllers.RecipeServlet.fillRecipe()");
-            while(it.hasNext()){
-                Map.Entry<String,String[]> entry = (Map.Entry<String,String[]>)it.next();
-                String key             = entry.getKey();
-                String[] value         = entry.getValue();
- 
-                System.out.println("Key is "+key+"");
-                    if(value.length>1){    
-                        for (int i = 0; i < value.length; i++) {
-                            System.out.println(value[i].toString());
-                        }
-                    }else System.out.println("Value is "+value[0].toString());
-                    System.out.println("-------------------");
-        }
+        System.out.println("controllers.RecipeServlet.fillRecipe()");
+        System.out.println("name : " + request.getParameter("name"));
         recipe.setName(request.getParameter("name"));
         recipe.setCreatedBy((User)request.getSession().getAttribute("user"));
         recipe.setDescription(request.getParameter("description"));
+        System.out.println("description : " + request.getParameter("description"));
         recipe.setImage(request.getParameter("image"));
         recipe.setCookingTime(Integer.parseInt(request.getParameter("cookingTime")));
         recipe.setPreparationTime(Integer.parseInt(request.getParameter("preparationTime")));
         recipe.setCategory(CategoryRepository.find(Integer.parseInt(request.getParameter("category_id"))));
         int i = 0 ;
+        recipe.getProducts().clear();
         while(request.getParameter("product_" + i + "[]") != null){
             String[] values = request.getParameterValues("product_" + i + "[]");
             recipe.addProduct(ProductRepository.find(Integer.valueOf(values[0])), Float.valueOf(values[1]), values[2]);
