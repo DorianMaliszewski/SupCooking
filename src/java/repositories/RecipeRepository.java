@@ -83,4 +83,8 @@ public class RecipeRepository {
         }
     }
     
+    public static Integer count(){
+        return new DefaultRepository<Recipe>(Recipe.class).count();
+    }
+    
 }

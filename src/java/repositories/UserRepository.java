@@ -107,4 +107,7 @@ public class UserRepository {
         return (User)obj;
     }
     
+    public static Integer count(){
+        return new DefaultRepository<User>(User.class).count();
+    }
 }

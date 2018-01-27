@@ -13,6 +13,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import repositories.RecipeRepository;
+import repositories.UserRepository;
 /**
  *
  * @author MaliszewskiDorian
@@ -33,6 +35,8 @@ public class HomeServlet extends HttpServlet {
             throws ServletException, IOException {
         System.out.println("HomeController");
         response.setContentType("text/html;charset=UTF-8");
+        request.setAttribute("recipesNumber", RecipeRepository.count());
+        request.setAttribute("usersNumber", UserRepository.count());
         String url = "/index.jsp";
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);

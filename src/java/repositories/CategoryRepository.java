@@ -82,4 +82,9 @@ public class CategoryRepository {
             return false;
         }
     }
+    
+    public static Integer count(){
+        return new DefaultRepository<Category>(Category.class).count();
+    }
+        
 }

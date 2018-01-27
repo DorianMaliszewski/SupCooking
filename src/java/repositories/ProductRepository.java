@@ -69,4 +69,8 @@ public class ProductRepository {
             return false;
         }
     }
+    
+    public static Integer count(){
+        return new DefaultRepository<Product>(Product.class).count();
+    }
 }
