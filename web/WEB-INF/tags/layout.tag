@@ -67,19 +67,16 @@
 
                 <div class="collapse navbar-collapse" id="navbarsExampleDefault">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/">Accueil<span class="sr-only">(current)</span></a>
+                        <li class="nav-item">
+                            <a class="nav-link" href="${pageContext.request.contextPath}/">Accueil</a>
                         </li>
                         <li class="nav-item ${pageContext.request.servletContext.contextPath}">
                             <a class="nav-link" href="${pageContext.request.contextPath}/recipes">Toutes les recettes</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/recipes/category">Par catégorie</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="${pageContext.request.contextPath}/recipes/product">Par produits</a>
-                        </li>
                         <c:if test="${!empty user}">
+                            <li class="nav-item ${pageContext.request.servletContext.contextPath}">
+                                <a class="nav-link" href="${pageContext.request.contextPath}/myrecipes">Mes recettes</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="javascript:void(0);" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Administration</a>
                                 <div class="dropdown-menu" aria-labelledby="dropdown01">

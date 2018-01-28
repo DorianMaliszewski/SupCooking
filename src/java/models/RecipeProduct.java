@@ -25,7 +25,6 @@ import org.hibernate.annotations.Proxy;
 @Table(name = "recipes_products")
 @IdClass(RecipeProductId.class)
 @XmlRootElement
-@Proxy(lazy=false)
 public class RecipeProduct implements Serializable {
 
     private static final long serialVersionUID = 1L;
