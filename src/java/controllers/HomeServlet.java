@@ -6,13 +6,17 @@
 package controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import models.User;
 import repositories.RecipeRepository;
 import repositories.UserRepository;
 /**
@@ -82,11 +86,23 @@ public class HomeServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * Joue le rôle de routeur
+     * @param req La requête
+     * @param resp La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
         if(req.getServletPath().equals("/search"))
         {
             this.search(req,resp);
+        }
+        else if(req.getServletPath().equals("/addMarkedRecipe"))
+        {
+            this.addMarked(req,resp);
         }
         else
         {
@@ -108,6 +124,58 @@ public class HomeServlet extends HttpServlet {
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
+    }
+
+    private void addMarked(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("text/plain; charset=utf-8");
+        
+        PrintWriter p = resp.getWriter();
+        Cookie[] cookies = req.getCookies();
+        Boolean exist = false;
+        int id;
+        
+        //On verifie de bien avoir un id en paramètre sinon on retourne une erreur
+        if(req.getParameter("id") == null)
+        {
+            resp.sendError(400, "Aucun id de recette renseigné");
+            return;
+        }
+        //On enregistre notre id (Si ce n'est pas un nombre une erreur sera levée)
+        else
+        {
+            id = Integer.valueOf(req.getParameter("id"));
+        }
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("recipesMarked")) {
+                    exist = true;
+                    cookie.setMaxAge(60*60*24*30);
+                    cookie.setValue(cookie.getValue() + ";" + id);
+                }
+            }
+        }
+        if(!exist){
+            Cookie c = new Cookie("recipesMarked", String.valueOf(id));
+            c.setComment("Id des recettes mises en favoris");
+            c.setDomain("SupCooking");
+            c.setSecure(false);
+            c.setMaxAge(60*60*24*30);
+            resp.addCookie(c);
+        }
+        if(req.getParameter("user") != null)
+        {
+            User u = (User)req.getSession().getAttribute("user");
+            u.getMarkedRecipe().add(RecipeRepository.find(id));
+            UserRepository.edit(u);
+        }
+    }
+    
+    private void removeMarked(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("text/plain; charset=utf-8");
+        PrintWriter p = resp.getWriter();
+        User u = (User)req.getSession().getAttribute("user");
+        u.getMarkedRecipe().remove(RecipeRepository.find(Integer.parseInt(req.getParameter("id"))));
+        UserRepository.edit(u);
     }
 
     

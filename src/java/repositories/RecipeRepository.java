@@ -7,6 +7,7 @@ package repositories;
 
 import java.util.List;
 import models.Recipe;
+import models.RecipeProduct;
 
 /**
  *
@@ -14,20 +15,6 @@ import models.Recipe;
  */
 public class RecipeRepository {
     
-    /*public static List findAll(){
-        List objs = null;
-        Session session = HibernateProvider.getFactory().openSession();
-        try {
-            Transaction t = session.beginTransaction();
-            objs = session.createQuery("SELECT r FROM Recipe r LEFT JOIN FETCH r.createdBy").list();
-            t.commit();
-        } catch (HibernateException e) {
-            System.err.println(e.getMessage());
-        } finally {
-            session.close();
-        }
-        return objs;
-    }*/
    
     public static Recipe find(int id) {
         return new DefaultRepository<Recipe>(Recipe.class).find(id);
@@ -44,7 +31,7 @@ public class RecipeRepository {
     public static boolean add(Recipe p) {
         try
         {
-            new DefaultRepository<Recipe>(Recipe.class).create(p);
+            Integer id = new DefaultRepository<>(Recipe.class).create(p);
             return true;
         }
         catch(Exception e)
@@ -58,7 +45,7 @@ public class RecipeRepository {
     public static boolean edit(Recipe p) {
         try
         {
-            new DefaultRepository<Recipe>(Recipe.class).edit(p);
+            new DefaultRepository<>(Recipe.class).edit(p);
             return true;
         }
         catch(Exception e)

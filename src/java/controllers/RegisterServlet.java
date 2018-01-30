@@ -36,6 +36,13 @@ public class RegisterServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         System.out.println("RegisterController");
+        response.setContentType("text/html;charset=UTF-8");
+        String url = "/login/register.jsp";
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(url);
+        rd.forward(request, response);
+        request.getSession().setAttribute("message", null);
+        request.getSession().setAttribute("success", null);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -51,17 +58,6 @@ public class RegisterServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-        System.out.println("GET method");
-        /*try {
-            request.getSession().setAttribute("token", MessageDigest.getInstance("MD5").digest("token".getBytes()));
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(RegisterServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        response.setContentType("text/html;charset=UTF-8");
-        String url = "/login/register.jsp";
-        ServletContext sc = getServletContext();
-        RequestDispatcher rd = sc.getRequestDispatcher(url);
-        rd.forward(request, response);
     }
 
     /**
@@ -81,26 +77,29 @@ public class RegisterServlet extends HttpServlet {
         try{
             u.setUsername(request.getParameter("username"));
             String pass = request.getParameter("password");
+            if(!pass.equals(request.getParameter("confirmPassword"))){
+                request.getSession().setAttribute("message", "Les mots de passe ne correpsondent pas");
+                request.getSession().setAttribute("success", false);
+                processRequest(request, response);
+                return;
+            }
             u.setFirstName(request.getParameter("firstName"));
             u.setLastName(request.getParameter("lastName"));
             u.setEmail(request.getParameter("email"));
             u.setPostalCode(request.getParameter("postalCode"));
-            //String token = (String)request.getSession().getAttribute("token");
             String[] saltAndPassEncrypted = EncryptionProvider.encrypt(pass);
             u.setPassword(saltAndPassEncrypted[1]);
             u.setSalt(saltAndPassEncrypted[0]);
             UserRepository.add(u);
             request.getSession().setAttribute("user", u);
         }
-        catch(NullPointerException e)
-        {
-            e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-        catch(Exception e){
+        catch(NullPointerException | IOException | ServletException e){
             System.out.println("Une erreur est survenue");
+            request.getSession().setAttribute("message", "Une etteur est survenue lors de l'enregistrement. Veuillez réessayer");
+            request.getSession().setAttribute("success", false);
             e.printStackTrace();
+            processRequest(request, response);
+            return;
         }
         response.sendRedirect(request.getContextPath());
     }
@@ -115,4 +114,11 @@ public class RegisterServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
+        super.service(req, resp); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 }

@@ -22,8 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ProfileServlet extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Retourne la page de profil
      *
      * @param request servlet request
      * @param response servlet response
@@ -78,8 +77,17 @@ public class ProfileServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * Joue le rôle de routeur
+     * Vérifie que l'utilisateur est bien connecté sinon renvoie vers la page de login
+     * @param req La requête
+     * @param resp La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
         if(req.getSession().getAttribute("user") == null){
             resp.sendRedirect(req.getContextPath() + "/login");
             return;

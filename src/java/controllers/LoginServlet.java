@@ -122,8 +122,16 @@ public class LoginServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * Joue le rôle de routeur
+     * @param req La requête
+     * @param resp La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
         if(req.getServletPath().equals("/logout")){
             this.logout(req,resp);
         }else{

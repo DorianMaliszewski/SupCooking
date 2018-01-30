@@ -15,10 +15,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
         <title>SupCooking - ${title}</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/js/bootstrap.min.js" integrity="sha384-a5N7Y/aK3qNeh15eJKGWxsqtnX/wWdSZSKp+81YjTmS15nvnvxKHuzaWwXHDli+4" crossorigin="anonymous"></script>
+        <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
         <style>
             html {
                 position: relative;
@@ -91,7 +91,7 @@
                     </ul>
                     <c:choose>
                         <c:when test="${!empty user}">
-                            <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/profile">Profil</a>
+                            <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/profile"><i class="fas fa-user"></i> Profil</a>
                             <a style="margin-right: 5px;" class="btn btn-outline-info" href="${pageContext.request.contextPath}/logout">Se déconnecter</a>
                         </c:when>
                         <c:otherwise>
@@ -100,7 +100,7 @@
                     </c:choose>
                     <form class="form-inline my-2 my-lg-0" action="${pageContext.request.contextPath}/search">
                         <input class="form-control mr-sm-2" placeholder="Rechercher" aria-label="Search" type="text">
-                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
             </nav>

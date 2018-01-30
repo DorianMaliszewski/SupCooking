@@ -13,7 +13,7 @@
     <jsp:attribute name="title">${recipe.name}
     </jsp:attribute>
     <jsp:body>
-        <h1>${recipe.name}</h1>
+        <h1>${recipe.name}</h1><span style="float:right" ><btn type="button" id="favouriteButton" class="btn btn-outline-primary"><i style="color:red;" id="heartIcon" class="${!user.markedRecipes.contains(recipe) ? "far" : "fas" } fa-heart"></i> Ajouter à mes favoris</btn></span>
         <div class="row">
             <div class="col-md-4">
                 Note
@@ -109,5 +109,41 @@
                 <p>${product.product.name}</p>
             </c:forEach>
         </div>
+        
+            <script>
+                /**
+                 * Change le css du coeur pour les favoris
+                 * @param Event e
+                 * @returns void
+                 */
+                function changeHeartIcon(e){
+                    e.preventDefault();
+                    let elem = e.target;
+                    var heartIcon = elem.querySelector("#heartIcon");
+                    if(heartIcon.dataset.prefix === "far"){
+                        heartIcon.dataset.prefix = "fas";
+                    }
+                    else
+                    {
+                        heartIcon.dataset.prefix = "far";
+                    }
+                }
+                
+                //Lorsque la souris entre et sort du bouton on déclenche l'évènement
+                document.getElementById("favouriteButton").onmouseover = changeHeartIcon;
+                document.getElementById("favouriteButton").onmouseleave = changeHeartIcon;
+                
+                document.getElementById("favouriteButton").click(function(e){
+                   e.preventDefault();
+                   $.ajax({
+                    method: "POST",
+                    url: "/addMarkedRecipe",
+                    data: { id: ${recipe.id}}
+                  })
+                    .done(function( msg ) {
+                      alert( "Data Saved: " + msg );
+                    });
+                });
+            </script>
     </jsp:body>
 </t:layout>

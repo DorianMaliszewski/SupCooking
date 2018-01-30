@@ -17,15 +17,17 @@ import models.Category;
 import repositories.CategoryRepository;
 
 /**
- *
+ * Servlet pour gérer les requêtes http concernant les catégories
  * @author MaliszewskiDorian
  */
 @WebServlet(name = "CategoryServlet", urlPatterns = "/categories/*")
 public class CategoryServlet extends HttpServlet {
+    
+    //La racine où sont stocké les vues
     private final String VIEW_PATH = "/category/";
+    
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Retourne la page d'index des categories et après l'avoir retrouné, vide la session du message que l'on a affiché
      *
      * @param request servlet request
      * @param response servlet response
@@ -84,8 +86,18 @@ public class CategoryServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * Joue le rôle de routeur
+     * Pour les méthode d'édition, de suppresion et de création vérifie que l'utilisateur est bien connecté.
+     * @param req La requête
+     * @param resp La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
+        //Si l'utilisateur n'est pas connecté je le renvoi vers la page de login
         if(req.getSession().getAttribute("user") == null){
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
@@ -115,16 +127,29 @@ public class CategoryServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Affiche le détail d'une catégorie ou renvoi vers l'index des catégories si aucun id n'est renseigné dans la requête
+     * @param request La requete
+     * @param response La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //On vérifie qu'un id est bien renseigné si je renvoi à la page d'index des catégories
         if(request.getParameter("id") == null){
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
+        
+        //Je récupère la catégorie
         Category category = CategoryRepository.find(Integer.parseInt(request.getParameter("id")));
+        
+        //Si aucune catégorie n'a été trouvée alors je renvoi vers la page d'index des catégories
         if(category == null){
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
+        
         response.setContentType("text/html;charset=UTF-8");
         String url = VIEW_PATH + "detail.jsp";
         ServletContext sc = getServletContext();
@@ -133,27 +158,50 @@ public class CategoryServlet extends HttpServlet {
         
     }
 
+    /**
+     * Ajoute une catégorie avec les paramètre renseigné.
+     * GET : Retourne la formulaire d'ajout de catégorie
+     * POST : Ajoute la catégorie avec les paramètres renseigné puis retourne à la page d'index des catégories
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if(request.getMethod().equals("POST")){
-            response.setContentType("text/html;charset=UTF-8");
+            
             Category category = new Category();
+            if(request.getParameter("name") == null){
+                this.setFlashBag("Il faut renseigné un nom", false, request);
+                this.forward(request, response, "form.jsp");
+                return;
+            }
+            
             category.setName(request.getParameter("name"));
+            
+            //On ajoute la catégorie et on récupère le résultat
             boolean success = CategoryRepository.add(category);
+            
+            //On informe l'utilisateur du résultat de l'ajout et on redirige vers l'index des catégories
             String message = success ? "L'élément à bien été ajouté" : "Erreur lors de la création de l'élément";
-            request.getSession().setAttribute("success", success);
-            request.getSession().setAttribute("message", message);
+            this.setFlashBag(message, success, request);
             response.sendRedirect(request.getContextPath() + request.getServletPath());
         }
         else
         {
-            response.setContentType("text/html;charset=UTF-8");
-            String url = VIEW_PATH + "/form.jsp";
-            ServletContext sc = getServletContext();
-            RequestDispatcher rd = sc.getRequestDispatcher(url);
-            rd.forward(request, response);
+           this.forward(request, response, "form.jsp");
         }
     }
 
+    /**
+     * Modifie une catégorie avec les informations passé en paramètre.
+     * Si la requête est de type GET affiche le formulaire.
+     * Si elle est de type POST modifie la catégorie et retourne vers la page d'index des catégories
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ServletException 
+     */
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
@@ -161,7 +209,6 @@ public class CategoryServlet extends HttpServlet {
         }
         Category category = CategoryRepository.find(Integer.parseInt(request.getParameter("id")));
         if (request.getMethod().equals("POST")) {
-            response.setContentType("text/html;charset=UTF-8");
             if(category == null)
             {
                category = new Category();
@@ -174,29 +221,64 @@ public class CategoryServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
         } else {
             request.setAttribute("category", category);
-            response.setContentType("text/html;charset=UTF-8");
-            String url = VIEW_PATH + "form.jsp";
-            ServletContext sc = getServletContext();
-            RequestDispatcher rd = sc.getRequestDispatcher(url);
-            rd.forward(request, response);
+            this.forward(request, response, "form.jsp");
         }
     }
 
+    /**
+     * Supprime la catégorie avec l'id passé en paramètre, type post
+     * @param request La requete
+     * @param response La repsonse
+     * @throws IOException
+     * @throws ServletException 
+     */
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        
+        //On vérifie qu'il y a bine un id sinon on retourne vers la page d'index des catégories
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
+        
+        //On récupère la catégorie
         Category category = CategoryRepository.find(Integer.parseInt(request.getParameter("id")));
+        
+        //On vérifie que ma requête est bien de type POST et qu'une catégorie a été trouvée
         if (request.getMethod().equals("POST") && category != null) {
             boolean success = CategoryRepository.delete(category);
             String message = success ? "Suppresion réussie" : "Erreur lors de la suppresion";
-            request.getSession().setAttribute("success", success);
-            request.getSession().setAttribute("message", message);
+            this.setFlashBag(message, success, request);
             
         }
         response.sendRedirect(request.getContextPath() + request.getServletPath());
     }
     
+    /**
+     * Paramètre un message sur la vue retournée, écrase le message précédent si il y en a un
+     * @param message Le texte à afficher
+     * @param success Si true message en vert sinon en rouge
+     * @param request La requete sur laquelle paramétrer le message
+     */
+    private void setFlashBag(String message, Boolean success, HttpServletRequest request){
+        request.getSession().setAttribute("success", success);
+        request.getSession().setAttribute("message", message);
+    }
     
+    /**
+     * Retourne la reponse vers une vue
+     * @param request La requete a retournée
+     * @param response La reponse a retournée
+     * @param view La vue que l'on souhaite afficher
+     * @throws ServletException
+     * @throws IOException 
+     */
+    private void forward(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException{
+        response.setContentType("text/html;charset=UTF-8");
+        String url = VIEW_PATH + view;
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(url);
+        rd.forward(request, response);
+        request.getSession().setAttribute("message", null);
+        request.getSession().setAttribute("success", null);
+    }
 }

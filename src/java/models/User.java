@@ -13,6 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -57,6 +60,22 @@ public class User implements Serializable {
     
     @OneToMany(mappedBy = "createdBy")
     private List<Recipe> recipes = new ArrayList<Recipe>();
+    
+    @ManyToMany
+    @JoinTable(
+      name="users_recipes_marks",
+      joinColumns=@JoinColumn(name="user_id", referencedColumnName="id"),
+      inverseJoinColumns=@JoinColumn(name="recipe_id", referencedColumnName="id"))
+    private List<Recipe> markedRecipe = new ArrayList<>();
+
+    public List<Recipe> getMarkedRecipe() {
+        return markedRecipe;
+    }
+
+    public void setMarkedRecipe(List<Recipe> markedRecipe) {
+        this.markedRecipe = markedRecipe;
+    }
+    
     
     private String token;
 
@@ -174,7 +193,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "models.User[ id=" + id + " ]";
+        return this.firstName + " " +this.lastName;
     }
     
 }

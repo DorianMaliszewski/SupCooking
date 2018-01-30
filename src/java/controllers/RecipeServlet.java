@@ -1,12 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -26,7 +21,7 @@ import repositories.ProductRepository;
 import repositories.RecipeRepository;
 
 /**
- *
+ * Servlet pour gérer les requettes pour les recettes
  * @author MaliszewskiDorian
  */
 @WebServlet(name = "Recipe", urlPatterns = "/recipes/*")
@@ -36,8 +31,7 @@ public class RecipeServlet extends HttpServlet {
     private final String VIEW_PATH = "/recipe/";
     
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * Retourne vers la page index des recettes
      *
      * @param request servlet request
      * @param response servlet response
@@ -89,18 +83,43 @@ public class RecipeServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * Retourne vers la page index des recettes par Catégories
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     private void indexByCategorie(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("recipes", RecipeRepository.findAll());
         this.forward(request, response, "indexByCategory.jsp");
     }
 
+    /**
+     * Retourne vers la page index des recettes par Produit
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     private void indexByRecipe(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         this.forward(request, response, "indexByRecipe.jsp");
     }
     
+    /**
+     * Joue le rôle de routeur
+     * Pour les méthode d'édition, de suppresion et de création vérifie que l'utilisateur est bien connecté.
+     * @param req La requête
+     * @param resp La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("utf-8");
+        //Si getPahtInfo retourne null alors l'url est la racine de mon servlet
         if (req.getPathInfo() != null) {
             switch (req.getPathInfo()) {
                 case "/categories":
@@ -142,45 +161,86 @@ public class RecipeServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Affiche le détail d'une recette
+     * @param request La requête
+     * @param response La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
+        //On vérifie qu'on à bien un id renseigné sinon on retourne à la page d'index des recettes
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
+        //On récupère la recette correspondant à l'id
         Recipe recipe = RecipeRepository.find(Integer.parseInt(request.getParameter("id")));
+        
+        //Si on a bien trouvé une recette sinon on retourne à la page d'index des recettes
         if (recipe == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
+        
+        //Si on a bien une recette alors j'affiche ses détails
         request.setAttribute("recipe", recipe);
         this.forward(request, response, "detail.jsp");
     }
 
+    /**
+     * Ajoute une recette pour l'utilisateur qui renseigne le formulair, renvoi sur la page d'index des recettes avec un message affiché pour savoir si l'élément à bien été crée
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        //On vérifie que ma requête est bien de type POST pour l'ajouter
         if (request.getMethod().equals("POST")) {
             Recipe recipe = new Recipe();
-            System.out.println("controllers.RecipeServlet.add() POST");
             boolean success = true;
             try{
+                //On ajoute et récupère le booléen de la réussite de l'ajout
                 success = RecipeRepository.add(fillRecipe(recipe, request));
+                
+                //On ajoute la recette a l'instance de l'utilisateur connecté.
+                ((User)request.getSession().getAttribute("user")).getRecipes().add(recipe);
+                
             }
             catch(Exception e)
             {
                 e.printStackTrace();
-                System.err.println(e.getMessage());
                 success = false;
             }
+            
+            //On mets le message pour informer l'utilisateur
             String message = success ? "L'élément à bien été ajouté" : "Erreur lors de la création de l'élément";
             this.setFlashBag(message, success, request);
+            
+            
+            //Je renvoie vers la page d'index des recettes
             response.sendRedirect(request.getContextPath() + request.getServletPath());
-        } else {
+        }
+        //Si la requête est de type GET j'affiche le formulaire
+        else 
+        {
             request.setAttribute("categories", CategoryRepository.findAll());
             request.setAttribute("products", ProductRepository.findAll());
             this.forward(request, response, "form.jsp");
         }
     }
 
+    /**
+     * Met à jour une recette et ses assocations. Redirige sur la page index, un message est affiché si l'élément à bien été mis à jour
+     * @param request La requete http
+     * @param response La reponse http
+     * @throws IOException
+     * @throws ServletException 
+     */
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        //On vérifie qu'il y a un id
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
@@ -196,7 +256,10 @@ public class RecipeServlet extends HttpServlet {
             String message = success ? "Modification réussie" : "Erreur lors de l'enregistrement";
             this.setFlashBag(message, success, request);
             response.sendRedirect(request.getContextPath() + request.getServletPath());
-        } else {
+        } 
+        //Sinon on renvoit sur le formulaire
+        else
+        {
             request.setAttribute("recipe", recipe);
             request.setAttribute("categories", CategoryRepository.findAll());
             request.setAttribute("products", ProductRepository.findAll());
@@ -204,6 +267,13 @@ public class RecipeServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Supprime une recette
+     * @param request La requete http avec un id en paramètre
+     * @param response La reponse http
+     * @throws IOException
+     * @throws ServletException
+     */
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
@@ -218,32 +288,72 @@ public class RecipeServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + request.getServletPath());
     }
     
+    /**
+     * Remplit la recette et ses association puis retourne la recette
+     * @param recipe L'instance de recette à remplir
+     * @param request La requete contenant les paramètres
+     * @return La recette remplie
+     * @throws NullPointerException Si un paramètre n'est pas renseigné retourne une erreur
+     * @throws Exception Retourne une exception si un même produit plusieurs fois
+     */
     private Recipe fillRecipe(Recipe recipe, HttpServletRequest request) throws NullPointerException, Exception{
         System.out.println("controllers.RecipeServlet.fillRecipe()");
-        System.out.println("name : " + request.getParameter("name"));
+        
+        //On remplit les paramètre de la recette
         recipe.setName(request.getParameter("name"));
         recipe.setCreatedBy((User)request.getSession().getAttribute("user"));
         recipe.setDescription(request.getParameter("description"));
-        System.out.println("description : " + request.getParameter("description"));
         recipe.setImage(request.getParameter("image"));
         recipe.setCookingTime(Integer.parseInt(request.getParameter("cookingTime")));
         recipe.setPreparationTime(Integer.parseInt(request.getParameter("preparationTime")));
         recipe.setCategory(CategoryRepository.find(Integer.parseInt(request.getParameter("category_id"))));
         int i = 0 ;
-        recipe.getProducts().clear();
+        
+        //On boucle sur les produits du formulaire
         while(request.getParameter("product_" + i + "[]") != null){
-            String[] values = request.getParameterValues("product_" + i + "[]");
-            recipe.addProduct(ProductRepository.find(Integer.valueOf(values[0])), Float.valueOf(values[1]), values[2]);
+            String[] values = request.getParameterValues("product_" + i + "[]");;
+            Product p = ProductRepository.find(Integer.valueOf(values[0]));
+            
+            //On cherche dans la collection si un produit existe déjà
+            Optional<RecipeProduct> rp = recipe.getProducts().stream().filter(recipeProduct -> (recipeProduct.getProduct() == p)).findFirst();
+            
+            //Si il existe plusieurs fois le même produit alors on retourne une erreur
+            if(recipe.getProducts().stream().filter(recipeProduct -> (recipeProduct.getProduct() == p)).count() > 1){
+                setFlashBag("Redondance de produit interdite", false, request);
+                throw new Exception("Plusieurs fois le même produit");
+            }
+            
+            //On verifie si on a bien trouve un produit dans ce cas on met à jour l'association autrement on ajoute une association
+            if (rp.isPresent()) {
+                rp.get().setQuantity(Float.valueOf(values[1]));
+                rp.get().setUnit(values[2]);
+            } else {
+                recipe.addProduct(p, Float.valueOf(values[1]), values[2]);
+            }
             i++;
         }
         return recipe;
     }
     
+    /**
+     * Paramètre un message sur la vue retournée, écrase le message précédent si il y en a un
+     * @param message Le texte à afficher
+     * @param success Si true message en vert sinon en rouge
+     * @param request La requete sur laquelle paramétrer le message
+     */
     private void setFlashBag(String message, Boolean success, HttpServletRequest request){
         request.getSession().setAttribute("success", success);
         request.getSession().setAttribute("message", message);
     }
     
+    /**
+     * Retourne la reponse vers une vue
+     * @param request La requete a retournée
+     * @param response La reponse a retournée
+     * @param view La vue que l'on souhaite afficher
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void forward(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException{
         response.setContentType("text/html;charset=UTF-8");
         String url = VIEW_PATH + view;

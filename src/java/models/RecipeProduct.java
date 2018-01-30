@@ -7,15 +7,14 @@ package models;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.hibernate.annotations.Proxy;
 
 /**
  *
@@ -23,20 +22,18 @@ import org.hibernate.annotations.Proxy;
  */
 @Entity
 @Table(name = "recipes_products")
-@IdClass(RecipeProductId.class)
 @XmlRootElement
-@Proxy(lazy=false)
 public class RecipeProduct implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-    @Id
+    /*@Id
     @Column(name = "recipe_id")
     private Integer recipeId;
     
     @Id
     @Column(name = "product_id")
-    private Integer productId;
+    private Integer productId;*/
 
     @Column(nullable = false)
     private String unit;
@@ -44,11 +41,13 @@ public class RecipeProduct implements Serializable {
     @Column(nullable = false, precision = 1)
     private Float quantity;
     
-    @ManyToOne
+    @Id
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "recipe_id", updatable = false, insertable = false, referencedColumnName = "id")
     private Recipe recipe;
     
-    @ManyToOne
+    @Id
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "product_id", updatable = false, insertable = false, referencedColumnName = "id")
     private Product product;
 
@@ -60,7 +59,7 @@ public class RecipeProduct implements Serializable {
         this.unit = unit;
     }
     
-    public Integer getRecipeId() {
+    /*public Integer getRecipeId() {
         return recipeId;
     }
 
@@ -74,33 +73,37 @@ public class RecipeProduct implements Serializable {
 
     public void setProductId(Integer productId) {
         this.productId = productId;
-    }
+    }*/
+    
     public Float getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Float quantity) {
+    public RecipeProduct setQuantity(Float quantity) {
         this.quantity = quantity;
+        return this;
     }
 
     public Recipe getRecipe() {
         return recipe;
     }
 
-    public void setRecipe(Recipe recipe) {
+    public RecipeProduct setRecipe(Recipe recipe) {
         this.recipe = recipe;
+        return this;
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
+    public RecipeProduct setProduct(Product product) {
         this.product = product;
+        return this;
     }
     
 
-    @Override
+    /*@Override
     public int hashCode() {
         return (int)(recipeId + productId);
     }
@@ -118,6 +121,26 @@ public class RecipeProduct implements Serializable {
     @Override
     public String toString() {
         return "models.RecipeProductId[ recipeId=" + recipeId + " productId="+ productId +" ]";
+    }*/
+    
+    @Override
+    public int hashCode() {
+        return (int)(recipe.getId() + product.getId());
+    }
+
+    @Override
+    public boolean equals(Object object) {
+      if (object instanceof RecipeProduct) {
+        RecipeProduct other = (RecipeProduct) object;
+        return (Objects.equals(other.recipe.getId(), this.recipe.getId())) && (Objects.equals(other.product.getId(), this.product.getId()));
+      }
+      return false;
+    }
+
+
+    @Override
+    public String toString() {
+        return "models.RecipeProductId[ recipeId=" + recipe.getId() + " productId="+ product.getId() +" ]";
     }
     
 }

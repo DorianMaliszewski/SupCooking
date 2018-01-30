@@ -16,23 +16,24 @@ import providers.HibernateUtil;
  * @author MaliszewskiDorian
  */
 public class DefaultRepository<T> {
-    private static Session s = HibernateUtil.getSessionFactory().openSession();
+    private static Session s;
     private Class<T> entityClass;
 
     public DefaultRepository(Class<T> entityClass) {
         this.entityClass = entityClass;
     }
 
-    protected Session getSession(){ return s; };
+    protected Session getSession(){ return s != null && s.isOpen() ? s : startSession(); };
 
     private Session startSession(){
         System.err.println("Create a session");
         s = HibernateUtil.getSessionFactory().openSession();
         return s;
     }
-    public void create(T entity) {
+    public Integer create(T entity) {
         getSession().save(entity);
         getSession().flush();
+        return (Integer)getSession().getIdentifier(entity);
     }
 
     public void edit(T entity) {

@@ -82,8 +82,17 @@ public class ProductServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * Joue le rôle de routeur
+     * Pour les méthode d'édition, de suppresion et de création vérifie que l'utilisateur est bien connecté.
+     * @param req La requête
+     * @param resp La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
         if(req.getSession().getAttribute("user") == null){
             resp.sendRedirect(req.getContextPath() + "/login");
             return;

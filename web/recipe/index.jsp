@@ -29,19 +29,21 @@
                 <tbody>
                     <c:forEach var="recipe" items="${recipes}">
                         <tr>
-                            <td><a href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}">Voir</a></td>
+                            <td><a class="btn btn-success" href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}"><i class="fas fa-search"></i> Voir</a></td>
                             <td>${recipe.id}</td>
                             <td>${recipe.image}</td>
                             <td>${recipe.name}</td>
                             <td>${recipe.description}</td>
                             <td>${recipe.category.name}</td>
                             <td>${recipe.createdBy}</td>
-                            <td>${recipe.mark}</td>
+                            <td>${recipe.mark != null ? recipe.mark : "Non notée" }</td>
                             <td>
-                                <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}">Edit</a>
-                                <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/recipes/delete?id=${recipe.id}">
-                                    <button class="btn btn-danger">Delete</button>
-                                </form>
+                                <c:if test="${!empty user && user.recipes.contains(recipe)}">
+                                    <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}"><i class="fas fa-edit"></i></a>
+                                    <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/recipes/delete?id=${recipe.id}">
+                                        <button class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                </c:if>
                             </td>
                         </tr>
                     </c:forEach>

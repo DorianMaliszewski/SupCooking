@@ -7,9 +7,6 @@ package repositories;
 
 import java.util.List;
 import models.Product;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 /**
  *
  * @author MaliszewskiDorian

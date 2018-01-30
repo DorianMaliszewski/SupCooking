@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,6 +39,7 @@ public class Recipe implements Serializable {
 
     private String name;
     
+    @Lob
     private String description;
     
     private String image;
@@ -63,7 +65,7 @@ public class Recipe implements Serializable {
     @JoinColumn(name = "created_by")
     private User createdBy;
 
-    @OneToMany(mappedBy = "recipe", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
     private List<RecipeProduct> products = new ArrayList<RecipeProduct>();
     
     @ManyToOne
@@ -95,8 +97,8 @@ public class Recipe implements Serializable {
         RecipeProduct association = new RecipeProduct();
         association.setProduct(product);
         association.setRecipe(this);
-        association.setProductId(product.getId());
-        association.setRecipeId(this.getId());
+        //association.setProductId(product.getId());
+        //association.setRecipeId(this.getId());
         association.setQuantity(quantity);
         association.setUnit(unit);
         if(this.products == null)

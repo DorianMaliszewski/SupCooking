@@ -18,7 +18,7 @@
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirmation</label>
-                <input type="password" class="form-control" id="confirmPassword" placeholder="Confirmer le mot de passe">
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirmer le mot de passe">
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
