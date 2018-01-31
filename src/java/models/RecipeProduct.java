@@ -24,16 +24,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "recipes_products")
 @XmlRootElement
 public class RecipeProduct implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
-    
-    /*@Id
-    @Column(name = "recipe_id")
-    private Integer recipeId;
-    
-    @Id
-    @Column(name = "product_id")
-    private Integer productId;*/
 
     @Column(nullable = false)
     private String unit;
@@ -58,22 +50,6 @@ public class RecipeProduct implements Serializable {
     public void setUnit(String unit) {
         this.unit = unit;
     }
-    
-    /*public Integer getRecipeId() {
-        return recipeId;
-    }
-
-    public void setRecipeId(Integer recipeId) {
-        this.recipeId = recipeId;
-    }
-
-    public Integer getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Integer productId) {
-        this.productId = productId;
-    }*/
     
     public Float getQuantity() {
         return quantity;

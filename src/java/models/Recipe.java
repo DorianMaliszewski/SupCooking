@@ -39,7 +39,7 @@ public class Recipe implements Serializable {
 
     private String name;
     
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
     
     private String image;

@@ -7,7 +7,6 @@ package controllers;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -41,6 +40,7 @@ public class HomeServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setAttribute("recipesNumber", RecipeRepository.count());
         request.setAttribute("usersNumber", UserRepository.count());
+        request.setAttribute("recipes", RecipeRepository.findRange(0,5));
         String url = "/index.jsp";
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
@@ -130,6 +130,9 @@ public class HomeServlet extends HttpServlet {
         resp.setContentType("text/plain; charset=utf-8");
         
         PrintWriter p = resp.getWriter();
+        Cookie c = new Cookie("test", "test");
+        c.setMaxAge(120);
+        resp.addCookie(c);
         Cookie[] cookies = req.getCookies();
         Boolean exist = false;
         int id;
@@ -137,7 +140,8 @@ public class HomeServlet extends HttpServlet {
         //On verifie de bien avoir un id en paramètre sinon on retourne une erreur
         if(req.getParameter("id") == null)
         {
-            resp.sendError(400, "Aucun id de recette renseigné");
+            //resp.sendError(400, "Aucun id de recette renseigné");
+            p.println("Aucun id de recette renseigné");
             return;
         }
         //On enregistre notre id (Si ce n'est pas un nombre une erreur sera levée)
@@ -154,7 +158,7 @@ public class HomeServlet extends HttpServlet {
                 }
             }
         }
-        if(!exist){
+        /**if(!exist){
             Cookie c = new Cookie("recipesMarked", String.valueOf(id));
             c.setComment("Id des recettes mises en favoris");
             c.setDomain("SupCooking");
@@ -167,7 +171,8 @@ public class HomeServlet extends HttpServlet {
             User u = (User)req.getSession().getAttribute("user");
             u.getMarkedRecipe().add(RecipeRepository.find(id));
             UserRepository.edit(u);
-        }
+        }**/
+        p.println("OK");
     }
     
     private void removeMarked(HttpServletRequest req, HttpServletResponse resp) throws IOException {

@@ -71,14 +71,13 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
         System.out.println("Post method");
         User u = new User();
         try{
             u.setUsername(request.getParameter("username"));
             String pass = request.getParameter("password");
             if(!pass.equals(request.getParameter("confirmPassword"))){
-                request.getSession().setAttribute("message", "Les mots de passe ne correpsondent pas");
+                request.getSession().setAttribute("message", "Les mots de passe ne correspondent pas");
                 request.getSession().setAttribute("success", false);
                 processRequest(request, response);
                 return;
@@ -95,7 +94,7 @@ public class RegisterServlet extends HttpServlet {
         }
         catch(NullPointerException | IOException | ServletException e){
             System.out.println("Une erreur est survenue");
-            request.getSession().setAttribute("message", "Une etteur est survenue lors de l'enregistrement. Veuillez réessayer");
+            request.getSession().setAttribute("message", "Une erreur est survenue lors de l'enregistrement. Veuillez réessayer");
             request.getSession().setAttribute("success", false);
             e.printStackTrace();
             processRequest(request, response);

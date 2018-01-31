@@ -76,14 +76,16 @@
                             </div>
                             <div class="col form-group">
                                 <select name="product_${loop.index}[]" class="form-control" >
-                                    <option>                                                        Sélectionnez l'unité  </option>
-                                    <option value="mg"  ${produit.unit == "mg" ? "selected" : ""}>  mg                    </option>
-                                    <option value="g"   ${produit.unit == "mg" ? "selected" : ""}>  g                     </option>
-                                    <option value="kg"  ${produit.unit == "mg" ? "selected" : ""}>  kg                    </option>
-                                    <option value="mL"  ${produit.unit == "mg" ? "selected" : ""}>  mL                    </option>
-                                    <option value="l"   ${produit.unit == "mg" ? "selected" : ""}>  L                     </option>
-                                    <option value="cas" ${produit.unit == "mg" ? "selected" : ""}>  Cuillère à soupe      </option>
-                                    <option value="cac" ${produit.unit == "mg" ? "selected" : ""}>  Cuillère à café       </option>
+                                    <option value=""    ${produit.unit == "" ? "selected" : ""}>      Sélectionnez l'unité  </option>
+                                    <option value="mg"  ${produit.unit == "mg" ? "selected" : ""}>      mg                    </option>
+                                    <option value="mg"  ${produit.unit == "mg" ? "selected" : ""}>      mg                    </option>
+                                    <option value="g"   ${produit.unit == "g" ? "selected" : ""}>       g                     </option>
+                                    <option value="kg"  ${produit.unit == "kg" ? "selected" : ""}>      kg                    </option>
+                                    <option value="mL"  ${produit.unit == "mL" ? "selected" : ""}>      mL                    </option>
+                                    <option value="L"   ${produit.unit == "L" ? "selected" : ""}>       L                     </option>
+                                    <option value="cas" ${produit.unit == "cas" ? "selected" : ""}>     Cuillère à soupe      </option>
+                                    <option value="cac" ${produit.unit == "cac" ? "selected" : ""}>     Cuillère à café       </option>
+                                    <option value="pincee" ${produit.unit == "pincee" ? "selected" : ""}>     Pincée       </option>
                                 </select>
                             </div>
                             </c:forEach>
@@ -117,7 +119,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <button class="btn btn-info" id="addProduct" click="addProduct()">Ajouter un produit</button>
+                <button class="btn btn-info" id="addProduct">Ajouter un produit</button>
                 <small id="productHelp" class="form-text text-muted">La recette doit comprendre au minimum un produit.</small>
             </div>
             <button type="submit" class="btn btn-primary">${prefixe}</button>
@@ -133,7 +135,7 @@
                                 '<select name="product_'+cpt+'[]" class="form-control" >'+
                                     '<option>Sélectionnez</option>'+
                                     <c:forEach var="p" items="${products}">
-                                        '<option value="${p.id}">${p.name}</option>'+
+                                        "<option value='${p.id}'>${p.name}</option>"+
                                     </c:forEach>
                                 '</select>'+
                             '</div>'+
