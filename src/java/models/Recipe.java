@@ -16,7 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -52,7 +51,7 @@ public class Recipe implements Serializable {
     @Column(name = "preparation_time")
     private Integer preparationTime;
     
-    @Column(scale = 2)
+    @Column(scale = 2, precision = 2)
     private Float mark;
     
     @Column(name = "number_of_mark")
@@ -97,8 +96,6 @@ public class Recipe implements Serializable {
         RecipeProduct association = new RecipeProduct();
         association.setProduct(product);
         association.setRecipe(this);
-        //association.setProductId(product.getId());
-        //association.setRecipeId(this.getId());
         association.setQuantity(quantity);
         association.setUnit(unit);
         if(this.products == null)
@@ -219,4 +216,11 @@ public class Recipe implements Serializable {
         return "models.Recipes[ id=" + id + " ]";
     }
     
+    public String getHTMLDescription(){
+        return description.replaceAll("\n", "<br>");
+    }
+    
+    public String getFormattedMark(){
+        return String.format("%.2f",mark / numberOfMark);
+    }
 }

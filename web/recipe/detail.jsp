@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri = "http://java.sun.com/jsp/jstl/functions" prefix = "fn" %>
@@ -13,13 +14,32 @@
     <jsp:attribute name="title">${recipe.name}
     </jsp:attribute>
     <jsp:body>
-        <h1>${recipe.name}</h1><span style="float:right" ><btn type="button" id="favouriteButton" class="btn btn-outline-primary"><i style="color:red;" id="heartIcon" class="${!user.markedRecipes.contains(recipe) ? "far" : "fas" } fa-heart"></i> Ajouter à mes favoris</btn></span>
+        <style>
+            .starIcon{
+                background-color: Transparent;
+                background-repeat:no-repeat;
+                border: none;
+                cursor:pointer;
+                overflow: hidden;
+                outline:none;
+            }
+        </style>
+        <div class="row">
+            <h1 class="col-md-9">${recipe.name}</h1>
+            <span class="col-md-3" id="starZone">
+                <button data-index=1 class="starIcon"> <i style="color:red;" class="far fa-star"></i> </button>
+                <button data-index=2 class="starIcon"> <i style="color:red;" class="far fa-star"></i> </button>
+                <button data-index=3 class="starIcon"> <i style="color:red;" class="far fa-star"></i> </button>
+                <button data-index=4 class="starIcon"> <i style="color:red;" class="far fa-star"></i> </button>
+                <button data-index=5 class="starIcon"> <i style="color:red;" class="far fa-star"></i> </button>
+            </span>    
+        </div>
         <div class="row">
             <div class="col-md-4">
                 Note
             </div>
             <div class="col-md-8">
-                ${recipe.mark}
+                <fmt:formatNumber type="number" minFractionDigits="0" maxFractionDigits="2" value="${!empty recipe.mark ? recipe.mark/recipe.numberOfMark : 0}" /> / 5 - ${recipe.numberOfMark} notes 
             </div>
         </div>
         <div class="row">
@@ -35,7 +55,7 @@
                 Description
             </div>
             <div class="col-md-8">
-                ${recipe.description}
+                ${recipe.HTMLDescription}
             </div>
         </div>
         <div class="row">
@@ -52,22 +72,6 @@
             </div>
             <div class="col-md-8">
                 ${recipe.createdBy}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Nombre de vue
-            </div>
-            <div class="col-md-8">
-                ${recipe.numberOfView}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Nombre de notes
-            </div>
-            <div class="col-md-8">
-                ${recipe.numberOfMark}
             </div>
         </div>
         <div class="row">
@@ -103,12 +107,12 @@
             </div>
         </div>
             <hr>
-        <div class="row">
             <h3>Ingrédients</h3>
             <c:forEach items="${recipe.products}" var="product">
-                <p>${product.product.name}</p>
+                <div class="row">
+                    <p>${product.product.name}</p>
+                </div>
             </c:forEach>
-        </div>
         
             <script>
                 /**
@@ -116,34 +120,58 @@
                  * @param Event e
                  * @returns void
                  */
-                function changeHeartIcon(e){
+                function fillStarsIcon(e){
                     e.preventDefault();
                     let elem = e.target;
-                    var heartIcon = elem.querySelector("#heartIcon");
-                    if(heartIcon.dataset.prefix === "far"){
-                        heartIcon.dataset.prefix = "fas";
-                    }
-                    else
-                    {
-                        heartIcon.dataset.prefix = "far";
-                    }
+                    let index  = elem.dataset.index;
+                    var starsIcon = document.querySelectorAll(".fa-star");
+                    Array.from(starsIcon).forEach(function(starIcon, indice){
+                        if(indice < index){
+                            starIcon.dataset.prefix = "fas";
+                        }else{
+                            starIcon.dataset.prefix = "far";
+                        }
+                    })
+                }
+                
+                function unfillStarsIcon(e){
+                    e.preventDefault();
+                    let elem = e.target;
+                    let index  = elem.dataset.index;
+                    var starsIcon = document.querySelectorAll(".fa-star");
+                    Array.from(starsIcon).forEach(function(starIcon, indice){
+                            starIcon.dataset.prefix = "far";
+                    });
+                }
+                
+                function noteThisRecipe(e){
+                    console.log("Hello")
+                    $.ajax({
+                        url: '${pageContext.servletContext.contextPath}/markRecipe',
+                        method: 'POST',
+                        data: { id: ${recipe.id}, mark: e.target.dataset.index },
+                        success: function(data){
+                            if(data == "OK"){
+                                alert("Merci d'avoir noté cette recette");
+                            }
+                            else{
+                                alert("Une erreur est survenue lors de l'enregistrement de votre note")
+                            }
+                        },
+                        error: function(error){
+                            console.log("Erreur", error);
+                        }
+                    });
+                    document.getElementById("starZone").style.display = "none";
                 }
                 
                 //Lorsque la souris entre et sort du bouton on déclenche l'évènement
-                document.getElementById("favouriteButton").onmouseover = changeHeartIcon;
-                document.getElementById("favouriteButton").onmouseleave = changeHeartIcon;
-                
-                document.getElementById("favouriteButton").click(function(e){
-                   e.preventDefault();
-                   $.ajax({
-                    method: "POST",
-                    url: "/addMarkedRecipe",
-                    data: { id: ${recipe.id}}
-                  })
-                    .done(function( msg ) {
-                      alert( "Data Saved: " + msg );
-                    });
+                Array.from(document.getElementsByClassName("starIcon")).forEach(function(icon){
+                    icon.onmouseenter = fillStarsIcon;
+                    icon.onmouseleave = unfillStarsIcon;
+                    icon.onclick= noteThisRecipe;
                 });
+                
             </script>
     </jsp:body>
 </t:layout>

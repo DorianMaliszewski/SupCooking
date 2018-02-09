@@ -36,7 +36,7 @@
                             <td>${recipe.description}</td>
                             <td>${recipe.category.name}</td>
                             <td>${recipe.createdBy}</td>
-                            <td>${recipe.mark != null ? recipe.mark : "Non notée" }</td>
+                            <td>${recipe.mark != null ? recipe.formattedMark : "Non notée" }</td>
                             <td>
                                 <c:if test="${!empty user && user.recipes.contains(recipe)}">
                                     <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}"><i class="fas fa-edit"></i></a>
