@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author dorian
  */
-@WebServlet(name = "Profile", urlPatterns = {"/profile/*", "/myrecipe"})
+@WebServlet(name = "Profile", urlPatterns = {"/profile/*", "/myrecipes"})
 public class ProfileServlet extends HttpServlet {
 
     /**
@@ -92,7 +92,19 @@ public class ProfileServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
-        super.service(req, resp); //To change body of generated methods, choose Tools | Templates.
+        if(req.getServletPath().equals("/myrecipes")){
+            getMyRecipe(req,resp);
+        }else{
+            super.service(req, resp); //To change body of generated methods, choose Tools | Templates.   
+        }
+    }
+
+    private void getMyRecipe(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        String url = "/profil/myrecipe.jsp";
+        ServletContext sc = getServletContext();
+        RequestDispatcher rd = sc.getRequestDispatcher(url);
+        rd.forward(request, response);
     }
 
     

@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <t:layout>
     <jsp:attribute name="title">Home
     </jsp:attribute>
@@ -16,10 +16,9 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td>Id</td>
+                        <td></td>
                         <td>Image</td>
                         <td>Name</td>
-                        <td>Description</td>
                         <td>Catégorie</td>
                         <td>Crée par</td>
                         <td>Note</td>
@@ -29,13 +28,12 @@
 
                 <c:forEach var="recipe" items="${recipes}">
                     <tr>
-                        <td>${recipe.id}</td>
-                        <td>${recipe.image}</td>
+                        <td><a class="btn btn-success" href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}"><i class="fas fa-search"></i> Voir</a></td>
+                        <td><img src='${recipe.image}' width="64" height="64"/></td>
                         <td>${recipe.name}</td>
-                        <td>${recipe.description}</td>
                         <td>${recipe.category.name}</td>
                         <td>${recipe.createdBy}</td>
-                        <td>${recipe.mark}</td>
+                        <td>${recipe.mark != null ? recipe.formattedMark : "Non notée" }</td>
                     </tr>
                 </c:forEach>
                 </tbody>

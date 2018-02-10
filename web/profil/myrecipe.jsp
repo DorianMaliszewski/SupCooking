@@ -32,12 +32,12 @@
                         <tr>
                             <td><a href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}">Voir</a></td>
                             <td>${recipe.id}</td>
-                            <td>${recipe.image}</td>
+                            <td><img src='${recipe.image}' width="64" height="64"/></td>
                             <td>${recipe.name}</td>
                             <td>${recipe.description}</td>
                             <td>${recipe.category.name}</td>
-                            <td>${recipe.createdBy}</td>
-                            <td>${recipe.mark}</td>
+                            <td>${recipe.createdBy.username}</td>
+                            <td>${recipe.mark != null ? recipe.formattedMark : "Non notée" }</td>
                             <td>
                                 <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}">Edit</a>
                                 <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/recipes/delete?id=${recipe.id}">

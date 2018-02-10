@@ -8,6 +8,13 @@ package repositories;
 import java.util.List;
 import models.Recipe;
 import models.RecipeProduct;
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
+import providers.HibernateUtil;
 
 /**
  *
@@ -72,6 +79,25 @@ public class RecipeRepository {
     
     public static Integer count(){
         return new DefaultRepository<Recipe>(Recipe.class).count();
+    }
+
+    public static List<Recipe> findBySentences(String search) {
+        
+        List<Recipe> objs = null;
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            Transaction t = session.beginTransaction();
+            Query q = session.createQuery("SELECT r FROM Recipe r where UPPER(r.name) like UPPER('%" + search + "%') OR UPPER(r.description) like UPPER('%" + search + "%')");
+            objs = q.list();
+            t.commit();
+        } catch (HibernateException e) {
+            System.err.println(e.getMessage());
+        } finally {
+            if(session != null)
+                session.close();
+        }
+        return objs;
     }
     
 }

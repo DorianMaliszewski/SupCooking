@@ -34,89 +34,86 @@
                 <button data-index=5 class="starIcon"> <i style="color:red;" class="far fa-star"></i> </button>
             </span>    
         </div>
+        <hr/>
+        <h4>Ingrédients</h4>
+            
+            <c:forEach items="${recipe.products}" var="product">
+                <div class="row">
+                    <p class="col-md-4">${product.product.name}</p> <p class="col-md-4">${product.quantity} ${product.unit}</p>
+                </div>
+            </c:forEach>
+        <hr/>
+        
+        <img class="mx-auto d-block" style="object-fit: cover" src="${recipe.image}" alt="${recipe.image}" width="600" height="300"/>
+        
+        <table class="table table-striped">
+            <tr>
+                <td>Note</td>
+                <td>
+                    <fmt:formatNumber type="number" minFractionDigits="0" maxFractionDigits="2" value="${!empty recipe.mark ? recipe.mark/recipe.numberOfMark : 0}" /> / 5 - ${recipe.numberOfMark} notes 
+                </td>
+            </tr>
+            
+            <tr>
+                <td>Catégorie</td>
+                <td>${recipe.category.name}</td>
+            </tr>
+            
+            <tr>
+                <td>Crée Par</td>
+                <td>${recipe.createdBy}</td>
+            </tr>
+            
+            <tr> 
+                <td>Temps de cuisson</td>
+                <td>${recipe.cookingTime} minutes</td>
+            </tr>
+            
+            <tr> 
+                <td>Temps de préparation</td>
+                <td>${recipe.preparationTime} minutes</td>
+            </tr>
+            
+            <tr>
+                <td>Difficulté</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${recipe.difficulty == 1}">Très Facile</c:when>
+                        <c:when test="${recipe.difficulty == 2}">Facile</c:when>
+                        <c:when test="${recipe.difficulty == 3}">Moyen</c:when>
+                        <c:when test="${recipe.difficulty == 4}">Difficile</c:when>
+                        <c:when test="${recipe.difficulty == 5}">Cordon Bleu</c:when>
+                        <c:otherwise>Non communique</c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>Nombre d'ingrédient</td>
+                <td>${fn:length(recipe.products)}</td>
+            </tr>
+        </table>
+        
+        <h3>Description</h3>
+        
         <div class="row">
-            <div class="col-md-4">
-                Note
-            </div>
-            <div class="col-md-8">
-                <fmt:formatNumber type="number" minFractionDigits="0" maxFractionDigits="2" value="${!empty recipe.mark ? recipe.mark/recipe.numberOfMark : 0}" /> / 5 - ${recipe.numberOfMark} notes 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Image
-            </div>
-            <div class="col-md-8">
-                <img src="${recipe.image}" alt="${recipe.image}"/>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Description
-            </div>
+            <div class="col-md-2"></div>
             <div class="col-md-8">
                 ${recipe.HTMLDescription}
             </div>
+            <div class="col-md-2"></div>
         </div>
-        <div class="row">
-            <div class="col-md-4">
-                Catégorie
-            </div>
-            <div class="col-md-8">
-                ${recipe.category.name}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Crée par
-            </div>
-            <div class="col-md-8">
-                ${recipe.createdBy}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Difficulté
-            </div>
-            <div class="col-md-8">
-                ${recipe.difficulty}
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Temps de cuisson
-            </div>
-            <div class="col-md-8">
-                ${recipe.cookingTime} minutes
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Temps de préparation
-            </div>
-            <div class="col-md-8">
-                ${recipe.preparationTime} minutes
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4">
-                Nombre d'ingrédient
-            </div>
-            <div class="col-md-8">
-                ${fn:length(recipe.products)}
-            </div>
-        </div>
-            <hr>
-            <h3>Ingrédients</h3>
-            <c:forEach items="${recipe.products}" var="product">
-                <div class="row">
-                    <p>${product.product.name}</p>
-                </div>
-            </c:forEach>
         
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <hr/>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
             <script>
                 /**
-                 * Change le css du coeur pour les favoris
+                 * Change le css des etoiles
                  * @param Event e
                  * @returns void
                  */
@@ -144,6 +141,11 @@
                     });
                 }
                 
+                /**
+                 * Permet de note la recette puis fais disparaitre les etoiles pour eviter le spam
+                 * @param Event e
+                 * @returns void
+                 */
                 function noteThisRecipe(e){
                     console.log("Hello")
                     $.ajax({

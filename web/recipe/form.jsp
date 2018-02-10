@@ -25,8 +25,8 @@
 
             <div class="form-group">
                 <label for="image">Image</label>
-                <input <c:if test="${!empty recipe}">value="${recipe.image}"</c:if> type="file" class="form-control" id="image" name="image" aria-describedby="imageHelp" placeholder="Nom de la recette"/>
-                <small id="imageHelp" class="form-text text-muted">Une image est requise.</small>
+                <input <c:if test="${!empty recipe}">value="${recipe.image}"</c:if> type="file" accept="image/*" class="form-control" id="image" name="image" aria-describedby="imageHelp" placeholder="Nom de la recette"/>
+                <small id="imageHelp" class="form-text text-muted">Si vous ne souhaitez pas modifier l'image actuelle alors ne rien sélectionner</small>
             </div>
 
             <div class="form-group">
@@ -40,6 +40,19 @@
                 <small id="categoryHelp" class="form-text text-muted">Une categorie doit être assignée à la recette.</small>
             </div>
 
+            <div class="form-group">
+                <label for="difficulty">Difficulté</label>
+                <select name='difficulty'>
+                    <option value="0" ${!empty recipe && recipe.difficulty == 0 ? "selected" : ""}>Sélectionnez</option>
+                    <option value="1" ${!empty recipe && recipe.difficulty == 1 ? "selected" : ""}>Très Facile</option>
+                    <option value="2" ${!empty recipe && recipe.difficulty == 2 ? "selected" : ""}>Facile</option>
+                    <option value="3" ${!empty recipe && recipe.difficulty == 3 ? "selected" : ""}>Moyen</option>
+                    <option value="4" ${!empty recipe && recipe.difficulty == 4 ? "selected" : ""}>Difficile</option>
+                    <option value="5" ${!empty recipe && recipe.difficulty == 5 ? "selected" : ""}>Cordon Bleu</option>
+                </select>
+                <small id="difficultyHelp" class="form-text text-muted">Difficulté pour réaliser la recette</small>
+            </div>
+                
             <div class="form-group">
                 <label for="preparationTime">Temps de préparation</label>
                 <input <c:if test="${!empty recipe}">value="${recipe.preparationTime}"</c:if> type="number" min='1' class="form-control" id="preparationTime" name="preparationTime" aria-describedby="preparationTimeHelp" placeholder="Temps de préparation">

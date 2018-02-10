@@ -10,12 +10,54 @@
     <jsp:attribute name="title">Home
     </jsp:attribute>
     <jsp:body>
-        <div class="jumbotron">
-            <h1 class="display-4">SupCooking c'est...</h1>
-            <p class="lead">Votre référence pour la cuisine étudiante</p>
-            <p class="lead">${recipesNumber} recette${recipesNumber > 1 ? "s" : ""} en ligne</p>
-            <p class='lead'>${usersNumber} utilisateur${usersNumber > 1 ? "s" : ""} inscrit${usersNumber > 1 ? "s" : ""}</p>
-        </div>
+              <div id="myCarousel" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                  <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                  <li data-target="#myCarousel" data-slide-to="1"></li>
+                  <li data-target="#myCarousel" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+                    <div class="container">
+                      <div class="carousel-caption text-left">
+                        <h1>SupCooking</h1>
+                        <p>Votre référence pour la cuisine étudiante.</p>
+                        <p><a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/register" role="button">S'inscrire</a></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="carousel-item">
+                    <img class="second-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Second slide">
+                    <div class="container">
+                      <div class="carousel-caption">
+                        <h1>SupCooking c'est ...</h1>
+                        <p>${recipesNumber} recette${recipesNumber > 1 ? "s" : ""} en ligne</p>
+                        <p>${usersNumber} utilisateur${usersNumber > 1 ? "s" : ""} inscrit${usersNumber > 1 ? "s" : ""}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="carousel-item">
+                    <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
+                    <div class="container">
+                      <div class="carousel-caption text-right">
+                        <h1>Gérer vos répas comme un chef</h1>
+                        <p>Supcooking est à destination des étudiants afin de leurs permettre de gérer leurs repas de leur vie quotidienne</p>
+                        <p><a class="btn btn-lg btn-primary" href="${pageContext.servletContext.contextPath}/recipes" role="button">Voir nos recettes</a></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </div>
+
         <hr>
         <h2>Nos dernières recettes</h2>
         <div class="row">
@@ -27,8 +69,7 @@
                             <p class="card-text">${recipe.numberOfView} vue${recipe.numberOfView > 1 ? "s" : ""} - ${recipe.numberOfMark} note${recipe.numberOfMark > 1 ? "s" : ""} - ${recipe.mark} / 5</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <a href="${pageContext.servletContext.contextPath}/recipe/show?id=${recipe.id}" class="btn btn-sm btn-outline-success" title="Voir la recette"><i class="fas fa-search"></i></a>
-                                    <button data-src="${recipe.id}" onclick="changeFavourite(this)" type="button" class="btn btn-sm btn-outline-primary add-favourite" title="Ajouter à mes favoris"><i class="far fa-heart"></i></button>
+                                    <a href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}" class="btn btn-sm btn-outline-success" title="Voir la recette"><i class="fas fa-search"></i></a>
                                 </div>
                                 <small class="text-muted">${recipe.preparationTime} mins de préparation</small>
                             </div>
@@ -37,18 +78,5 @@
                 </div>
             </c:forEach>
         </div>
-        <script type="text/javascript">
-            function changeFavourite(elem){
-                console.log(elem.dataset)
-                   $.ajax({
-                    method: "POST",
-                    url: "${pageContext.servletContext.contextPath}/addMarkedRecipe",
-                    data: { id: elem.dataset.src }
-                  })
-                    .done(function( msg ) {
-                      alert( "Data Saved: " + msg);
-                    });
-            }
-        </script>
     </jsp:body>
 </t:layout>

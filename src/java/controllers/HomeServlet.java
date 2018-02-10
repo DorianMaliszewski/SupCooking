@@ -11,19 +11,17 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Recipe;
-import models.User;
 import repositories.RecipeRepository;
 import repositories.UserRepository;
 /**
  *
  * @author MaliszewskiDorian
  */
-@WebServlet(name = "Home", urlPatterns = "/")
+@WebServlet(name = "Home", urlPatterns = {"","/search","/markRecipe"})
 public class HomeServlet extends HttpServlet {
 
     /**
@@ -46,6 +44,8 @@ public class HomeServlet extends HttpServlet {
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
+        request.setAttribute("message", null);
+        request.setAttribute("success", null);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -115,16 +115,19 @@ public class HomeServlet extends HttpServlet {
         
         if(request.getParameter("s") == null){
             response.sendRedirect(request.getContextPath());
-            request.getSession().setAttribute("message", "Renseingez un text de recherche");
+            request.getSession().setAttribute("message", "Renseignez un texte de recherche");
             request.getSession().setAttribute("success", false);
             return;
         }
         
         response.setContentType("text/html;charset=UTF-8");
+        request.setAttribute("recipes", RecipeRepository.findBySentences(request.getParameter("s")));
         String url = "/search.jsp";
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
+        request.setAttribute("message", null);
+        request.setAttribute("success", null);
     }
 
     private void markRecipe(HttpServletRequest req, HttpServletResponse resp) throws IOException {

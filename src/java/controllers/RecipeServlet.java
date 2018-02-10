@@ -1,7 +1,13 @@
 package controllers;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Optional;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -12,6 +18,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import models.Product;
 import models.Recipe;
 import models.RecipeProduct;
@@ -19,6 +26,7 @@ import models.User;
 import repositories.CategoryRepository;
 import repositories.ProductRepository;
 import repositories.RecipeRepository;
+import repositories.UserRepository;
 
 /**
  * Servlet pour gérer les requettes pour les recettes
@@ -245,16 +253,24 @@ public class RecipeServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
+        
         Recipe recipe = RecipeRepository.find(Integer.parseInt(request.getParameter("id")));
+        
         if (request.getMethod().equals("POST") && recipe != null) {
             try {
+                //On remplit la recette
                 fillRecipe(recipe, request);
             } catch (Exception ex) {
                 Logger.getLogger(RecipeServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+            
             boolean success = RecipeRepository.edit(recipe);
             String message = success ? "Modification réussie" : "Erreur lors de l'enregistrement";
             this.setFlashBag(message, success, request);
+            
+            //On mets à jour l'objet User pour avoir les mises à jour
+            request.getSession().setAttribute("user", UserRepository.find(((User)request.getSession().getAttribute("user")).getId()));
+            
             response.sendRedirect(request.getContextPath() + request.getServletPath());
         } 
         //Sinon on renvoit sur le formulaire
@@ -300,13 +316,25 @@ public class RecipeServlet extends HttpServlet {
         System.out.println("controllers.RecipeServlet.fillRecipe()");
         
         //On remplit les paramètre de la recette
+        
         recipe.setName(request.getParameter("name"));
+        
         recipe.setCreatedBy((User)request.getSession().getAttribute("user"));
+        
+        //La description est enregistrée avec des \n pour qu'elle s'affiche bien dans la textarea
         recipe.setDescription(request.getParameter("description"));
-        recipe.setImage(request.getParameter("image"));
+        
+        //Si on a pas uploader d'image alors on la mets pas à jour
+        if (request.getPart("image").getSize() != 0)
+            //Télécharge l'image et mets l'url dans la propriété
+            recipe.setImage(getBaseUrl(request) + downloadImage(request.getPart("image")));
+        System.out.println("URL ; " + getBaseUrl(request) + recipe.getImage());
+        recipe.setDifficulty(Integer.parseInt(request.getParameter("difficulty")));
         recipe.setCookingTime(Integer.parseInt(request.getParameter("cookingTime")));
         recipe.setPreparationTime(Integer.parseInt(request.getParameter("preparationTime")));
+        
         recipe.setCategory(CategoryRepository.find(Integer.parseInt(request.getParameter("category_id"))));
+  
         int i = 0 ;
         
         //On boucle sur les produits du formulaire
@@ -364,4 +392,77 @@ public class RecipeServlet extends HttpServlet {
         request.getSession().setAttribute("success", null);
     }
     
+    
+    /**
+     * A partir du part passé en paramètre télécharge l'image et renvoi l'url pour y accéder
+     * @param filePart le part de l'image
+     * @return l'url de l'image
+     * @throws IOException 
+     */
+    private String downloadImage(Part filePart) throws IOException{
+        
+        //Streams
+        OutputStream out = null;
+        InputStream inputStream = null;
+        
+        // obtains the upload file part in this multipart request
+        String fileName = null;
+        
+        // obtains input stream of the upload file
+        inputStream = filePart.getInputStream();
+        
+        String[] array = filePart.getSubmittedFileName().split("\\.");
+        System.out.println("Array count : " + array.length);
+        
+        fileName = getRandomString() + "." + array[(array.length - 1)];
+        
+        try {
+            out = new FileOutputStream(new File( getServletContext().getRealPath(File.separator) + "upload/" + fileName));
+
+            int read = 0;
+            final byte[] bytes = new byte[1024];
+
+            while ((read = inputStream.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+        
+        } catch (FileNotFoundException fne) {
+                System.out.println("controllers.RecipeServlet.fillRecipe() : error : " + fne.getMessage());
+        } finally {
+            if (out != null) {
+                out.close();
+            }
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+        return "/upload/" + fileName;
+    }
+    
+    
+    private String getRandomString() {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 18) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        String saltStr = salt.toString();
+        return saltStr;
+
+    }
+    
+    private String getBaseUrl( HttpServletRequest request ) {
+    if ( ( request.getServerPort() == 80 ) ||
+         ( request.getServerPort() == 443 ) )
+      return request.getScheme() + "://" +
+             request.getServerName() +
+             request.getContextPath();
+    else
+      return request.getScheme() + "://" +
+             request.getServerName() + ":" + request.getServerPort() +
+             request.getContextPath();
+  }
+  
 }
