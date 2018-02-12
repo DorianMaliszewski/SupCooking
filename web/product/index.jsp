@@ -25,12 +25,6 @@
                     <tr>
                         <td>${product.id}</td>
                         <td>${product.name}</td>
-                        <td>
-                            <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/products/edit?id=${product.id}">Edit</a>
-                            <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/products/delete?id=${product.id}">
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>

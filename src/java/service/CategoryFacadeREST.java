@@ -25,40 +25,37 @@ public class CategoryFacadeREST extends AbstractFacade<Category> {
     }
 
     /**
-     * Récupère une catégorie avec l'id passé en paramètre sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
-     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * Récupère une catégorie avec l'id passé en paramètre sur une requête de type GET et retourne les données au format JSON
      * @param id L'id à chercher
      * @return L'entité formattée dans le format choisi
      */
     @GET
     @Path("{id}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public Category find(@PathParam("id") Integer id) {
         return super.find(id);
     }
 
     /**
-     * Récupère toutes les catégories sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
-     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * Récupère toutes les catégories sur une requête de type GET et retourne les données au format JSON  
      * @return La liste d'entité formattée dans le format choisi
      */
     @GET
     @Override
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Category> findAll() {
         return super.findAll();
     }
 
     /**
-     * Récupère une liste de catégorie d'une borne inférieure à une borne supérieure avec les bornes passées en paramètre sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
-     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * Récupère une liste de catégorie d'une borne inférieure à une borne supérieure avec les bornes passées en paramètre sur une requête de type GET et retourne les données au format JSON
      * @param from borne inférieure commançant à 0
      * @param to borne supérieure
      * @return La liste d'entité formattée dans le format choisi
      */
     @GET
     @Path("{from}/{to}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    @Produces(MediaType.APPLICATION_JSON)
     public List<Category> findRange(@PathParam("from") Integer from, @PathParam("to") Integer to) {
         return super.findRange(new int[]{from, to});
     }

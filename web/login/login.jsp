@@ -56,11 +56,6 @@
             <input type="text" id="username" name="username" class="form-control" placeholder="ID" required autofocus>
             <label for="inputPassword" class="sr-only">Mot de passe</label>
             <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Mot de passe" required>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" value="remember-me"> Se souvenir de moi (7 jours)
-                </label>
-            </div>
             <p>Vous n'avez pas de compte ? <a href="${pageContext.servletContext.contextPath}/register">S'inscrire</a></p>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Se connecter</button>
         </form>

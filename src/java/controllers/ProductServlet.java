@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Product;
+import models.User;
 import repositories.ProductRepository;
 
 /**
@@ -179,6 +180,10 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException 
      */
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
@@ -213,6 +218,10 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException 
      */
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;

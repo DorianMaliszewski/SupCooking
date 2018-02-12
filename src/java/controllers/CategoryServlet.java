@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import models.Category;
+import models.User;
 import repositories.CategoryRepository;
 
 /**
@@ -198,6 +199,13 @@ public class CategoryServlet extends HttpServlet {
      * @throws ServletException 
      */
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        
+        //Seul l'admin peut modifier
+        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
+        
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
@@ -228,6 +236,12 @@ public class CategoryServlet extends HttpServlet {
      * @throws ServletException 
      */
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        
+        //Seul l'admin peut supprimer
+        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
         
         //On vérifie qu'il y a bine un id sinon on retourne vers la page d'index des catégories
         if (request.getParameter("id") == null) {

@@ -53,23 +53,12 @@ public class User implements Serializable {
     @XmlTransient
     private String salt;
     
-    @Column(name = "remember_me", nullable = true)
-    private Boolean rememberMe;
     
     @OneToMany(mappedBy = "createdBy")
     @XmlTransient
     @JsonbTransient
     private List<Recipe> recipes = new ArrayList<Recipe>();    
     
-    private String token;
-
-    public Boolean getRememberMe() {
-        return rememberMe;
-    }
-
-    public void setRememberMe(Boolean rememberMe) {
-        this.rememberMe = rememberMe;
-    }
 
     @XmlTransient
     @JsonbTransient
@@ -143,14 +132,6 @@ public class User implements Serializable {
 
     public void setSalt(String salt) {
         this.salt = salt;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
     
     public Integer getId() {

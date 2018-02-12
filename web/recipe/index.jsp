@@ -12,6 +12,7 @@
     <jsp:body>
         <h1>Toutes les recettes</h1>
         <div class="table-responsive">
+            <strong>Cliquez sur la recette que vous souhaitez visualiser</strong>
             <table class="table table-hover">
                 <thead>
                     <tr>

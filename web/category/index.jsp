@@ -25,12 +25,6 @@
                     <tr>
                         <td>${category.id}</td>
                         <td>${category.name}</td>
-                        <td>
-                            <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/categories/edit?id=${category.id}">Edit</a>
-                            <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/categories/delete?id=${category.id}">
-                                <button class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>
