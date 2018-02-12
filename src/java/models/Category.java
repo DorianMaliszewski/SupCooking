@@ -7,9 +7,8 @@ package models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import javax.persistence.CascadeType;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,7 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.hibernate.annotations.Proxy;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -38,8 +37,11 @@ public class Category implements Serializable {
     private String name;
     
     @OneToMany(mappedBy = "category")
+    @XmlTransient
+    @JsonbTransient
     private List<Recipe> recipes = new ArrayList<Recipe>();
 
+    @XmlTransient
     public List<Recipe> getRecipes() {
         return recipes;
     }

@@ -8,6 +8,7 @@ package models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -37,8 +40,12 @@ public class Product implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
+    @XmlTransient
+    @JsonbTransient
     private List<RecipeProduct> recipes = new ArrayList<RecipeProduct>();
 
+    @XmlTransient
+    @JsonbTransient
     public List<RecipeProduct> getRecipes() {
         return recipes;
     }

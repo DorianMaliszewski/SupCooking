@@ -8,6 +8,7 @@ package models;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,6 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Model de la classe utilisateur
@@ -50,32 +52,22 @@ public class User implements Serializable {
     private String postalCode;
     
     @Column(nullable = false)
+    @JsonbTransient
+    @XmlTransient
     private String password;
     
     @Column(nullable = false)
+    @JsonbTransient
+    @XmlTransient
     private String salt;
     
     @Column(name = "remember_me", nullable = true)
     private Boolean rememberMe;
     
     @OneToMany(mappedBy = "createdBy")
-    private List<Recipe> recipes = new ArrayList<Recipe>();
-    
-    @ManyToMany
-    @JoinTable(
-      name="users_recipes_marks",
-      joinColumns=@JoinColumn(name="user_id", referencedColumnName="id"),
-      inverseJoinColumns=@JoinColumn(name="recipe_id", referencedColumnName="id"))
-    private List<Recipe> markedRecipe = new ArrayList<>();
-
-    public List<Recipe> getMarkedRecipe() {
-        return markedRecipe;
-    }
-
-    public void setMarkedRecipe(List<Recipe> markedRecipe) {
-        this.markedRecipe = markedRecipe;
-    }
-    
+    @XmlTransient
+    @JsonbTransient
+    private List<Recipe> recipes = new ArrayList<Recipe>();    
     
     private String token;
 
@@ -87,6 +79,8 @@ public class User implements Serializable {
         this.rememberMe = rememberMe;
     }
 
+    @XmlTransient
+    @JsonbTransient
     public List<Recipe> getRecipes() {
         return recipes;
     }
@@ -139,6 +133,8 @@ public class User implements Serializable {
         this.postalCode = postalCode;
     }
 
+    @JsonbTransient
+    @XmlTransient
     public String getPassword() {
         return password;
     }
@@ -147,6 +143,8 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    @JsonbTransient
+    @XmlTransient
     public String getSalt() {
         return salt;
     }

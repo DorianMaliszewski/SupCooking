@@ -7,6 +7,7 @@ package models;
 
 import java.io.Serializable;
 import java.util.Objects;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -36,6 +38,7 @@ public class RecipeProduct implements Serializable {
     @Id
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "recipe_id", updatable = false, insertable = false, referencedColumnName = "id")
+    @JsonbTransient
     private Recipe recipe;
     
     @Id
