@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import java.io.IOException;
@@ -18,8 +13,9 @@ import models.Recipe;
 import repositories.RecipeRepository;
 import repositories.UserRepository;
 /**
- *
- * @author MaliszewskiDorian
+ * Servlet Accueil du projet
+ * 
+ * @author Dorian Maliszewski
  */
 @WebServlet(name = "Home", urlPatterns = {"","/search","/markRecipe"})
 public class HomeServlet extends HttpServlet {
@@ -111,6 +107,13 @@ public class HomeServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Recherche les recettes comprenant la chaine de caractère passée en paramètre et retourne la vue avec les résultats
+     * @param request La requête
+     * @param response La réponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void search(HttpServletRequest request, HttpServletResponse response) throws ServletException,  IOException{
         
         if(request.getParameter("s") == null){
@@ -130,6 +133,13 @@ public class HomeServlet extends HttpServlet {
         request.setAttribute("success", null);
     }
 
+    /**
+     * Permet de mettre à jour la note de la recette
+     * Retourne OK si tous s'ets bien passé
+     * @param req La requête
+     * @param resp La réponse
+     * @throws IOException 
+     */
     private void markRecipe(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if(req.getMethod().equalsIgnoreCase("POST")){
             Recipe r = RecipeRepository.find(Integer.parseInt(req.getParameter("id")));

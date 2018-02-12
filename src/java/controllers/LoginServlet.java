@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import java.io.IOException;
@@ -18,8 +13,8 @@ import providers.EncryptionProvider;
 import repositories.UserRepository;
 
 /**
- *
- * @author MaliszewskiDorian
+ *Servlet permettant de gérer la connexion et la déconnexion
+ * @author Dorian Maliszewski
  */
 @WebServlet(name = "Login", urlPatterns = {"/login","/logout"})
 public class LoginServlet extends HttpServlet {
@@ -140,6 +135,12 @@ public class LoginServlet extends HttpServlet {
         return;
     }
 
+    /**
+     * Permet de déconnecter l'instance courante de l'utilisateur
+     * @param req La requête
+     * @param resp La réponse
+     * @throws IOException 
+     */
     private void logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
        req.getSession().invalidate();
        resp.sendRedirect(req.getContextPath());

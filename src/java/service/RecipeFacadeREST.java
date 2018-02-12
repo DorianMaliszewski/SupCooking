@@ -1,16 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
 import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -21,8 +12,8 @@ import providers.HibernateUtil;
 import repositories.RecipeRepository;
 
 /**
- *
- * @author dorian
+ * Web service des recettes
+ * @author Dorian Maliszewski
  */
 @Path("recipes")
 public class RecipeFacadeREST extends AbstractFacade<Recipe> {
@@ -33,26 +24,12 @@ public class RecipeFacadeREST extends AbstractFacade<Recipe> {
         super(Recipe.class);
     }
 
-    @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Recipe entity) {
-        super.create(entity);
-    }
-
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Recipe entity) {
-        super.edit(entity);
-    }
-
-    @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
-    }
-
+    /**
+     * Récupère une recette avec l'id passé en paramètre sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
+     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * @param id L'id à chercher
+     * @return L'entité formattée dans le format choisi
+     */
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -60,6 +37,11 @@ public class RecipeFacadeREST extends AbstractFacade<Recipe> {
         return super.find(id);
     }
 
+    /**
+     * Récupère toutes les recettes sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
+     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * @return La liste d'entité formattée dans le format choisi
+     */
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -67,6 +49,12 @@ public class RecipeFacadeREST extends AbstractFacade<Recipe> {
         return super.findAll();
     }
     
+    /**
+     * Renvoie les recettes trouvées à partir de la chaîne de caractères passée en paramètre sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
+     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * @param s La chaîne de caractère
+     * @return La liste formattée dans le format choisi
+     */
     @GET
     @Path("search/{s}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -74,6 +62,13 @@ public class RecipeFacadeREST extends AbstractFacade<Recipe> {
         return RecipeRepository.findBySentences(s);
     }
 
+    /**
+     * Récupère une liste de recettes d'une borne inférieure à une borne supérieure avec les bornes passées en paramètre sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
+     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * @param from borne inférieure commançant à 0
+     * @param to borne supérieure
+     * @return La liste d'entité formattée dans le format choisi
+     */
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -81,6 +76,10 @@ public class RecipeFacadeREST extends AbstractFacade<Recipe> {
         return super.findRange(new int[]{from, to});
     }
 
+    /**
+     * Renvoi le nombre total d'entité dans la table
+     * @return Le nombre total
+     */
     @GET
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)

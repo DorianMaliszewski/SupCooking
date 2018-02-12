@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package models;
 
 import java.io.Serializable;
@@ -12,7 +7,7 @@ import java.util.Objects;
  *
  * @author dorian
  */
-public class RecipeProductId implements Serializable{
+public class RecipeProductIdOld implements Serializable{
 
     private Integer recipeId;
 
@@ -41,8 +36,8 @@ public class RecipeProductId implements Serializable{
 
     @Override
     public boolean equals(Object object) {
-      if (object instanceof RecipeProductId) {
-        RecipeProductId otherId = (RecipeProductId) object;
+      if (object instanceof RecipeProductIdOld) {
+        RecipeProductIdOld otherId = (RecipeProductIdOld) object;
         return (Objects.equals(otherId.recipeId, this.recipeId)) && (Objects.equals(otherId.productId, this.productId));
       }
       return false;

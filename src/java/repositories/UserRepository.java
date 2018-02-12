@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package repositories;
 
 import java.util.List;
@@ -14,24 +9,10 @@ import org.hibernate.Transaction;
 import providers.HibernateUtil;
 
 /**
- *
- * @author MaliszewskiDorian
+ * Dao pour les utilisateurs
+ * @author Maliszewski Dorian
  */
 public class UserRepository {
-    /*public static User find(int id) {
-        List objs = null;
-        Session session = HibernateProvider.getFactory().openSession();
-        try {
-            Transaction t = session.beginTransaction();
-            objs = session.createQuery("SELECT u FROM Users u LEFT JOIN FETCH u.recipe").list();
-            t.commit();
-        } catch (HibernateException e) {
-            System.err.println(e.getMessage());
-        } finally {
-            session.close();
-        }
-        return (User)objs;
-    }*/
 
     public static User find(int id) {
         return new DefaultRepository<User>(User.class).find(id);

@@ -1,16 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package service;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
 
 /**
- *
- * @author dorian
+ * Classe de configuration des web services
+ * @author Dorian Maliszewski
  */
 @javax.ws.rs.ApplicationPath("api")
 public class ApplicationConfig extends Application {
@@ -32,8 +27,6 @@ public class ApplicationConfig extends Application {
         resources.add(service.CategoryFacadeREST.class);
         resources.add(service.ProductFacadeREST.class);
         resources.add(service.RecipeFacadeREST.class);
-        resources.add(service.RecipeProductFacadeREST.class);
-        resources.add(service.UserFacadeREST.class);
     }
     
 }

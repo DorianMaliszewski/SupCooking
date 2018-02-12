@@ -30,8 +30,8 @@ import repositories.RecipeRepository;
 import repositories.UserRepository;
 
 /**
- * Servlet pour gérer les requettes pour les recettes
- * @author MaliszewskiDorian
+ * Servlet pour gérer les requetes pour les recettes
+ * @author Dorian Maliszewski
  */
 @WebServlet(name = "Recipe", urlPatterns = "/recipes/*")
 @MultipartConfig
@@ -450,8 +450,8 @@ public class RecipeServlet extends HttpServlet {
     
     
     /**
-     * 
-     * @return 
+     * Retourne une chaîne de caractères aléatoire
+     * @return La chaîne de caractères
      */
     private String getRandomString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -466,6 +466,12 @@ public class RecipeServlet extends HttpServlet {
 
     }
     
+    /**
+     * Retourne l'url de base du serveur
+     * exemple : http://localhost:8080/SupCooking/
+     * @param request
+     * @return La string de l'url
+     */
     private String getBaseUrl( HttpServletRequest request ) {
     if ( ( request.getServerPort() == 80 ) ||
          ( request.getServerPort() == 443 ) )

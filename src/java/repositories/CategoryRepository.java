@@ -1,33 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package repositories;
 
 import java.util.List;
 import models.Category;
 
 /**
- *
+ * DAO pour les Catégories
  * @author MaliszewskiDorian
  */
 public class CategoryRepository {
-    
-    /*public static List findAll() {
-        List objs = null;
-        Session session = HibernateProvider.getFactory().openSession();
-        try {
-            Transaction t = session.beginTransaction();
-            objs = session.createQuery("SELECT c FROM Category c LEFT JOIN FETCH c.recipes").list();
-            t.commit();
-        } catch (HibernateException e) {
-            System.err.println(e.getMessage());
-        } finally {
-            session.close();
-        }
-        return objs;
-    }*/
 
     public static Category find(int id) {
         return new DefaultRepository<Category>(Category.class).find(id);

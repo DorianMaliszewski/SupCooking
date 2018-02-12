@@ -1,16 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package service;
 
 import java.util.List;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,8 +12,8 @@ import org.hibernate.Session;
 import providers.HibernateUtil;
 
 /**
- *
- * @author dorian
+ *Web service des catégories
+ * @author Dorian Maliszewski
  */
 @Path("categories")
 public class CategoryFacadeREST extends AbstractFacade<Category> {
@@ -32,26 +24,12 @@ public class CategoryFacadeREST extends AbstractFacade<Category> {
         super(Category.class);
     }
 
-    @POST
-    @Override
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void create(Category entity) {
-        super.create(entity);
-    }
-
-    @PUT
-    @Path("{id}")
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public void edit(@PathParam("id") Integer id, Category entity) {
-        super.edit(entity);
-    }
-
-    @DELETE
-    @Path("{id}")
-    public void remove(@PathParam("id") Integer id) {
-        super.remove(super.find(id));
-    }
-
+    /**
+     * Récupère une catégorie avec l'id passé en paramètre sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
+     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * @param id L'id à chercher
+     * @return L'entité formattée dans le format choisi
+     */
     @GET
     @Path("{id}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -59,6 +37,11 @@ public class CategoryFacadeREST extends AbstractFacade<Category> {
         return super.find(id);
     }
 
+    /**
+     * Récupère toutes les catégories sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
+     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * @return La liste d'entité formattée dans le format choisi
+     */
     @GET
     @Override
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -66,6 +49,13 @@ public class CategoryFacadeREST extends AbstractFacade<Category> {
         return super.findAll();
     }
 
+    /**
+     * Récupère une liste de catégorie d'une borne inférieure à une borne supérieure avec les bornes passées en paramètre sur une requête de type GET et retourne soit au format JSON soit XML (par défaut XML)
+     * Pour récupérer au format JSON mettre Accept : application/json dans l'entête de la requête
+     * @param from borne inférieure commançant à 0
+     * @param to borne supérieure
+     * @return La liste d'entité formattée dans le format choisi
+     */
     @GET
     @Path("{from}/{to}")
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -73,6 +63,10 @@ public class CategoryFacadeREST extends AbstractFacade<Category> {
         return super.findRange(new int[]{from, to});
     }
 
+    /**
+     * Renvoi le nombre total d'entité dans la table
+     * @return Le nombre total
+     */
     @GET
     @Path("count")
     @Produces(MediaType.TEXT_PLAIN)

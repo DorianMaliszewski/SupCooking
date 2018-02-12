@@ -18,8 +18,8 @@ import providers.EncryptionProvider;
 import repositories.UserRepository;
 
 /**
- *
- * @author dorian
+ * Servlet du profile
+ * @author Dorian Maliszewski
  */
 @WebServlet(name = "Profile", urlPatterns = {"/profile/*", "/myrecipes"})
 public class ProfileServlet extends HttpServlet {
@@ -116,6 +116,13 @@ public class ProfileServlet extends HttpServlet {
         request.getSession().setAttribute("success", null);
     }
 
+    /**
+     * Modifie l'utilisateur avec les paramètres renseigné, si rien n'est renseigné pour le paramètre password alors ne modifie pas le mot de passe
+     * @param request La requete
+     * @param response La réponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if(request.getMethod().equals("POST")){
             User user = (User)request.getSession().getAttribute("user");

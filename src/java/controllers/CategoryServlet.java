@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import java.io.IOException;
@@ -18,7 +13,7 @@ import repositories.CategoryRepository;
 
 /**
  * Servlet pour gérer les requêtes http concernant les catégories
- * @author MaliszewskiDorian
+ * @author Dorian Maliszewski
  */
 @WebServlet(name = "CategoryServlet", urlPatterns = "/categories/*")
 public class CategoryServlet extends HttpServlet {

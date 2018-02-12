@@ -18,8 +18,8 @@ import providers.EncryptionProvider;
 import repositories.UserRepository;
 
 /**
- *
- * @author dorian
+ * Servlet Pour l'inscription
+ * @author Dorian Maliszewski
  */
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {

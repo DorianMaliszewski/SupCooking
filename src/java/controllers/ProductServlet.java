@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import java.io.IOException;
@@ -17,8 +12,8 @@ import models.Product;
 import repositories.ProductRepository;
 
 /**
- *
- * @author MaliszewskiDorian
+ * Servlet des produits
+ * @author Dorian Maliszewski
  */
 @WebServlet(name = "Product", urlPatterns = "/products/*")
 public class ProductServlet extends HttpServlet {
@@ -122,6 +117,13 @@ public class ProductServlet extends HttpServlet {
         }
     }
     
+    /**
+     * Affiche le détail d'un produit ou renvoi vers l'index des produits si aucun id n'est renseigné dans la requête
+     * @param request La requete
+     * @param response La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
@@ -139,6 +141,15 @@ public class ProductServlet extends HttpServlet {
         rd.forward(request, response);
     }
 
+    /**
+     * Ajoute un produit avec les paramètres renseignés.
+     * GET : Retourne la formulaire d'ajout du produit
+     * POST : Ajoute le produit avec les paramètres renseignés puis retourne à la page d'index des produits
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException 
+     */
     private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getMethod().equals("POST")) {
             response.setContentType("text/html;charset=UTF-8");
@@ -158,6 +169,15 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Modifie un produit avec les informations passés en paramètre.
+     * Si la requête est de type GET affiche le formulaire.
+     * Si elle est de type POST modifie le produit et retourne vers la page d'index des produits
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ServletException 
+     */
     private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
@@ -185,6 +205,13 @@ public class ProductServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Supprime le produit avec l'id passé en paramètre, type post
+     * @param request La requete
+     * @param response La repsonse
+     * @throws IOException
+     * @throws ServletException 
+     */
     private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
