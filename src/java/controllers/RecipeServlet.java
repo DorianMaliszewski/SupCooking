@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.logging.Level;
@@ -296,8 +297,16 @@ public class RecipeServlet extends HttpServlet {
             return;
         }
         Recipe recipe = RecipeRepository.find(Integer.parseInt(request.getParameter("id")));
-        if (request.getMethod().equals("POST") && recipe != null) {
+        if (
+                request.getMethod().equals("POST") && recipe != null &&
+                request.getSession().getAttribute("user") != null &&
+                Objects.equals(((User)request.getSession().getAttribute("user")).getId(), recipe.getCreatedBy().getId())
+            ) {
             boolean success = RecipeRepository.delete(recipe);
+            
+            //On mets à jour l'objet User pour avoir les mises à jour
+            request.getSession().setAttribute("user", UserRepository.find(((User)request.getSession().getAttribute("user")).getId()));
+            
             String message = success ? "Suppression réussie" : "Erreur lors de la suppresion";
             this.setFlashBag(message, success, request);
         }
@@ -440,6 +449,10 @@ public class RecipeServlet extends HttpServlet {
     }
     
     
+    /**
+     * 
+     * @return 
+     */
     private String getRandomString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();

@@ -11,6 +11,7 @@
     <jsp:attribute name="title">Profil
     </jsp:attribute>
     <jsp:body>
+        <a style="float:right" class="btn btn-info" href="${pageContext.servletContext.contextPath}/profile/edit">Modifier mes informations</a>
         <h1>${user.firstName}&nbsp;${user.lastName}</h1>
         <div class="row">
             <div class="col-md-4">

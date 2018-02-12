@@ -6,7 +6,6 @@
 package service;
 
 import java.util.List;
-import javax.ejb.Stateless;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import models.Recipe;
 import org.hibernate.Session;
 import providers.HibernateUtil;
+import repositories.RecipeRepository;
 
 /**
  *
@@ -65,6 +65,13 @@ public class RecipeFacadeREST extends AbstractFacade<Recipe> {
     @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public List<Recipe> findAll() {
         return super.findAll();
+    }
+    
+    @GET
+    @Path("search/{s}")
+    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public List<Recipe> search(@PathParam("s") String s) {
+        return RecipeRepository.findBySentences(s);
     }
 
     @GET

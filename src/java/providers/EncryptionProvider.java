@@ -19,6 +19,11 @@ import java.util.logging.Logger;
  */
 public class EncryptionProvider {
     
+    /**
+     * Encrypte le mot de passe passé en paramètre et retourne en 0 le salt généré et en 1 le mot de passé encrypter
+     * @param pass Le mot de passe à encrypter
+     * @return Tableau contenant le salt et le mot de passe encrypter
+     */
     public static String[] encrypt(String pass) {
         byte[] salt = null;
         String strSalt = "";
@@ -30,6 +35,7 @@ public class EncryptionProvider {
         }
         return new String[] { strSalt, securePassword(pass, strSalt)};
     }
+    
     
     private static String securePassword(String passwordToHash, String salt)
     {
@@ -61,6 +67,13 @@ public class EncryptionProvider {
         return salt;
     }
     
+    /**
+     * Vérifie le mot de passe passé en paramètre avec le mot de passe encrypter et le salt
+     * @param encodedPass le mot de passé encrypté
+     * @param pass le mot de passe à vérifier
+     * @param salt le salt pour encrypter le mot de passe
+     * @return true si les message sont les mêmes
+     */
     public static boolean verifyPassword(String encodedPass, String pass, String salt){
         String password = securePassword(pass, salt);
         return password.equals(encodedPass);

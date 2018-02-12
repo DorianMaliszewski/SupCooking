@@ -8,6 +8,7 @@ package repositories;
 import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import providers.HibernateUtil;
 
@@ -56,6 +57,7 @@ public class DefaultRepository<T> {
 
     public List<T> findRange(int[] range) {
         Criteria c = getSession().createCriteria(entityClass.getName());
+        c.addOrder(Order.desc("id"));
         c.setFirstResult(range[0]);
         c.setMaxResults(range[1] - range[0]);
         return c.list();

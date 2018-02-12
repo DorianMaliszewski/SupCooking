@@ -39,9 +39,9 @@
                             <td>${recipe.createdBy.username}</td>
                             <td>${recipe.mark != null ? recipe.formattedMark : "Non notée" }</td>
                             <td>
-                                <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}">Edit</a>
-                                <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/recipes/delete?id=${recipe.id}">
-                                    <button class="btn btn-danger">Delete</button>
+                                <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}"><i class="fas fa-edit"></i></a>
+                                <form id="deleteForm" style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/recipes/delete?id=${recipe.id}">
+                                    <button class="btn btn-danger"><i class="fas fa-trash-alt"></i>&nbsp;</button>
                                 </form>
                             </td>
                         </tr>
@@ -49,5 +49,22 @@
                 </tbody>
             </table>
         </div>
+        
+        <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/add">Ajouter une recette</a>
+        
+        
+        <script type="text/javascript">
+            document.getElementById("deleteForm").onsubmit = function(event){
+                var rep = confirm("Etes-vous sur de vouloir supprimer cette recette ?");
+                if(rep){
+                    console.log("Accepter");
+                    return true;
+                }
+                else{
+                    console.log("Refuser");
+                    return false;
+                }
+            }
+        </script>
     </jsp:body>
 </t:layout>

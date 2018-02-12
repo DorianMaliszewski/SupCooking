@@ -18,7 +18,7 @@
                 </ol>
                 <div class="carousel-inner">
                   <div class="carousel-item active">
-                    <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+                      <img class="first-slide" src="${pageContext.servletContext.contextPath}/css/slide1.jpg" style="object-fit: cover" alt="First slide">
                     <div class="container">
                       <div class="carousel-caption text-left">
                         <h1>SupCooking</h1>
@@ -28,7 +28,7 @@
                     </div>
                   </div>
                   <div class="carousel-item">
-                    <img class="second-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Second slide">
+                    <img class="second-slide" src="${pageContext.servletContext.contextPath}/css/slide2.jpeg" style="object-fit: cover" alt="Second slide">
                     <div class="container">
                       <div class="carousel-caption">
                         <h1>SupCooking c'est ...</h1>
@@ -38,7 +38,7 @@
                     </div>
                   </div>
                   <div class="carousel-item">
-                    <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
+                    <img class="third-slide" src="${pageContext.servletContext.contextPath}/css/slide3.jpg" style="object-fit: cover" alt="Third slide">
                     <div class="container">
                       <div class="carousel-caption text-right">
                         <h1>Gérer vos répas comme un chef</h1>
@@ -64,9 +64,9 @@
             <c:forEach var="recipe" items="${recipes}">
                 <div class="col-md-4">
                     <div class="card mb-4 box-shadow">
-                        <img class="card-img-top" data-src="${recipe.image}" alt="${recipe.name}" style="height: 225px; width: 100%; display: block;" src="${recipe.image}" data-holder-rendered="true">
+                        <img class="card-img-top" data-src="${recipe.image}" alt="${recipe.name}" style="height: 225px; width: 100%; display: block;object-fit: cover" src="${recipe.image}" data-holder-rendered="true">
                         <div class="card-body">
-                            <p class="card-text">${recipe.numberOfView} vue${recipe.numberOfView > 1 ? "s" : ""} - ${recipe.numberOfMark} note${recipe.numberOfMark > 1 ? "s" : ""} - ${recipe.mark} / 5</p>
+                            <p class="card-text">${recipe.numberOfView} vue${recipe.numberOfView > 1 ? "s" : ""} - ${recipe.numberOfMark} note${recipe.numberOfMark > 1 ? "s" : ""} - ${recipe.formattedMark} / 5</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <a href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}" class="btn btn-sm btn-outline-success" title="Voir la recette"><i class="fas fa-search"></i></a>
