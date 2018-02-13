@@ -2,7 +2,9 @@ package repositories;
 
 import java.util.List;
 import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import providers.HibernateUtil;
@@ -33,11 +35,9 @@ public class DefaultRepository<T> {
      * Renvoi une session, la session courante si une est déjà ouvert sinon ouvre une nouvelle session
      * @return Session la session
      */
-    private Session startSession(){
+    protected Session startSession(){
         System.err.println("Create a session");
-        s = HibernateUtil.getSessionFactory().getCurrentSession().isOpen() ? 
-                HibernateUtil.getSessionFactory().getCurrentSession(): 
-                HibernateUtil.getSessionFactory().openSession();
+        s = HibernateUtil.getSessionFactory().openSession();
         return s;
     }
     
@@ -47,27 +47,50 @@ public class DefaultRepository<T> {
      * @return L'id de l'entité ajoutée
      */
     public Integer create(T entity) {
-        getSession().save(entity);
-        getSession().flush();
-        return (Integer)getSession().getIdentifier(entity);
+        try{
+            getSession().save(entity);
+            getSession().flush();
+            return (Integer)getSession().getIdentifier(entity);
+        }catch(HibernateException e){
+            if(getSession().isOpen())
+                getSession().close();
+            System.err.println("Error in create method : " + e.getLocalizedMessage());
+            System.out.println("Message : " + e.getMessage());
+            return null;
+        }
     }
 
     /**
      * Edite une entité
      * @param entity L'entité à ajouter
      */
-    public void edit(T entity) {
-        getSession().saveOrUpdate(entity);
-        getSession().flush();
+    public boolean edit(T entity) {
+        try{
+            getSession().saveOrUpdate(entity);
+            getSession().flush();
+            return true;
+        }catch(HibernateException e){
+            if(getSession().isOpen())
+                getSession().close();
+            System.err.println("Error in create method : " + e.getLocalizedMessage());
+            System.out.println("Message : " + e.getMessage());
+            return false;
+        }
     }
 
     /**
      * Supprime une entité
      * @param entity l'entité à supprimer
      */
-    public void remove(T entity) {
-        getSession().delete(getSession().merge(entity));
-        getSession().flush();
+    public boolean remove(T entity) {
+        try{
+            getSession().delete(getSession().merge(entity));
+            getSession().flush();
+            return true;
+        }catch(HibernateException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**

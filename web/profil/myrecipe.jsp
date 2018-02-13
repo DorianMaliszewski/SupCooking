@@ -16,31 +16,27 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <td></td>
-                        <td>Id</td>
-                        <td>Image</td>
-                        <td>Name</td>
-                        <td>Description</td>
-                        <td>Catégorie</td>
-                        <td>Crée par</td>
-                        <td>Note</td>
-                        <td></td>
+                        <th></th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Catégorie</th>
+                        <th>Crée par</th>
+                        <th>Note</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <c:forEach var="recipe" items="${user.recipes}">
                         <tr>
-                            <td><a href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}">Voir</a></td>
-                            <td>${recipe.id}</td>
+                            <td><a class="btn btn-success" href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}"><i class="fas fa-search"></i> Voir</a></td>
                             <td><img src='${recipe.image}' width="64" height="64"/></td>
                             <td>${recipe.name}</td>
-                            <td>${recipe.description}</td>
                             <td>${recipe.category.name}</td>
                             <td>${recipe.createdBy.username}</td>
                             <td>${recipe.mark != null ? recipe.formattedMark : "Non notée" }</td>
                             <td>
                                 <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/recipes/edit?id=${recipe.id}"><i class="fas fa-edit"></i></a>
-                                <form id="deleteForm" style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/recipes/delete?id=${recipe.id}">
+                                <form class="deleteForm" style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/recipes/delete?id=${recipe.id}">
                                     <button class="btn btn-danger"><i class="fas fa-trash-alt"></i>&nbsp;</button>
                                 </form>
                             </td>
@@ -54,17 +50,9 @@
         
         
         <script type="text/javascript">
-            document.getElementById("deleteForm").onsubmit = function(event){
-                var rep = confirm("Etes-vous sur de vouloir supprimer cette recette ?");
-                if(rep){
-                    console.log("Accepter");
-                    return true;
-                }
-                else{
-                    console.log("Refuser");
-                    return false;
-                }
-            }
+            Array.from(document.getElementsByClassName("deleteForm")).forEach(function(form){
+                form.onsubmit = function(event){ return confirm("Etes-vous sur de vouloir supprimer cette recette ?"); }
+            });
         </script>
     </jsp:body>
 </t:layout>

@@ -91,31 +91,6 @@ public class RecipeServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    /**
-     * Retourne vers la page index des recettes par Catégories
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    private void indexByCategorie(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.setAttribute("recipes", RecipeRepository.findAll());
-        this.forward(request, response, "indexByCategory.jsp");
-    }
-
-    /**
-     * Retourne vers la page index des recettes par Produit
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    private void indexByRecipe(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        this.forward(request, response, "indexByRecipe.jsp");
-    }
     
     /**
      * Joue le rôle de routeur
@@ -131,12 +106,6 @@ public class RecipeServlet extends HttpServlet {
         //Si getPahtInfo retourne null alors l'url est la racine de mon servlet
         if (req.getPathInfo() != null) {
             switch (req.getPathInfo()) {
-                case "/categories":
-                    indexByCategorie(req, resp);
-                    break;
-                case "/products":
-                    indexByRecipe(req, resp);
-                    break;
                 case "/show":
                     show(req, resp);
                     break;
@@ -177,7 +146,7 @@ public class RecipeServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         //On vérifie qu'on à bien un id renseigné sinon on retourne à la page d'index des recettes
         if (request.getParameter("id") == null) {
@@ -193,7 +162,9 @@ public class RecipeServlet extends HttpServlet {
             return;
         }
         
-        //Si on a bien une recette alors j'affiche ses détails
+        //Si on a bien une recette alors j'affiche ses détails et j'incrémente le nombre de vues que je sauvegarde en base
+        recipe.setNumberOfView((recipe.getNumberOfView() != null ? recipe.getNumberOfView() : 0) + 1);
+        RecipeRepository.edit(recipe);
         request.setAttribute("recipe", recipe);
         this.forward(request, response, "detail.jsp");
     }
@@ -205,7 +176,7 @@ public class RecipeServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //On vérifie que ma requête est bien de type POST pour l'ajouter
         if (request.getMethod().equals("POST")) {
             Recipe recipe = new Recipe();
@@ -248,7 +219,7 @@ public class RecipeServlet extends HttpServlet {
      * @throws IOException
      * @throws ServletException 
      */
-    private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         //On vérifie qu'il y a un id
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
@@ -257,7 +228,16 @@ public class RecipeServlet extends HttpServlet {
         
         Recipe recipe = RecipeRepository.find(Integer.parseInt(request.getParameter("id")));
         
-        if (request.getMethod().equals("POST") && recipe != null) {
+        //Si la recette n'a pas été trouvée ou l'utilisateur de la recette n'est pas le même que l'utilisateur connecté
+        if(
+            recipe == null ||
+            !Objects.equals(((User)request.getSession().getAttribute("user")).getId(), recipe.getCreatedBy().getId())
+        ){
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
+        
+        if (request.getMethod().equals("POST")) {
             try {
                 //On remplit la recette
                 fillRecipe(recipe, request);
@@ -291,17 +271,23 @@ public class RecipeServlet extends HttpServlet {
      * @throws IOException
      * @throws ServletException
      */
-    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
         Recipe recipe = RecipeRepository.find(Integer.parseInt(request.getParameter("id")));
-        if (
-                request.getMethod().equals("POST") && recipe != null &&
-                request.getSession().getAttribute("user") != null &&
-                Objects.equals(((User)request.getSession().getAttribute("user")).getId(), recipe.getCreatedBy().getId())
-            ) {
+        
+        //Si la recette n'a pas été trouvée ou l'utilisateur de la recette n'est pas le même que l'utilisateur connecté
+        if(
+            recipe == null ||
+            !Objects.equals(((User)request.getSession().getAttribute("user")).getId(), recipe.getCreatedBy().getId())
+        ){
+            response.sendRedirect(request.getContextPath() + request.getServletPath());
+            return;
+        }
+        
+        if (request.getMethod().equals("POST")) {
             boolean success = RecipeRepository.delete(recipe);
             
             //On mets à jour l'objet User pour avoir les mises à jour
@@ -321,7 +307,7 @@ public class RecipeServlet extends HttpServlet {
      * @throws NullPointerException Si un paramètre n'est pas renseigné retourne une erreur
      * @throws Exception Retourne une exception si un même produit plusieurs fois
      */
-    private Recipe fillRecipe(Recipe recipe, HttpServletRequest request) throws NullPointerException, Exception{
+    protected Recipe fillRecipe(Recipe recipe, HttpServletRequest request) throws NullPointerException, Exception{
         System.out.println("controllers.RecipeServlet.fillRecipe()");
         
         //On remplit les paramètre de la recette
@@ -337,7 +323,7 @@ public class RecipeServlet extends HttpServlet {
         if (request.getPart("image").getSize() != 0)
             //Télécharge l'image et mets l'url dans la propriété
             recipe.setImage(getBaseUrl(request) + downloadImage(request.getPart("image")));
-        System.out.println("URL ; " + getBaseUrl(request) + recipe.getImage());
+        
         recipe.setDifficulty(Integer.parseInt(request.getParameter("difficulty")));
         recipe.setCookingTime(Integer.parseInt(request.getParameter("cookingTime")));
         recipe.setPreparationTime(Integer.parseInt(request.getParameter("preparationTime")));
@@ -348,8 +334,16 @@ public class RecipeServlet extends HttpServlet {
         
         //On boucle sur les produits du formulaire
         while(request.getParameter("product_" + i + "[]") != null){
-            String[] values = request.getParameterValues("product_" + i + "[]");;
-            Product p = ProductRepository.find(Integer.valueOf(values[0]));
+            String[] values = request.getParameterValues("product_" + i + "[]");
+            Integer idProduit = null;
+            try{
+                idProduit = Integer.valueOf(values[0]);
+            }catch(NumberFormatException e){
+                i++;
+                continue;
+            }
+            
+            Product p = ProductRepository.find(idProduit);
             
             //On cherche dans la collection si un produit existe déjà
             Optional<RecipeProduct> rp = recipe.getProducts().stream().filter(recipeProduct -> (recipeProduct.getProduct() == p)).findFirst();
@@ -378,7 +372,7 @@ public class RecipeServlet extends HttpServlet {
      * @param success Si true message en vert sinon en rouge
      * @param request La requete sur laquelle paramétrer le message
      */
-    private void setFlashBag(String message, Boolean success, HttpServletRequest request){
+    protected void setFlashBag(String message, Boolean success, HttpServletRequest request){
         request.getSession().setAttribute("success", success);
         request.getSession().setAttribute("message", message);
     }
@@ -391,7 +385,7 @@ public class RecipeServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void forward(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException{
+    protected void forward(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException{
         response.setContentType("text/html;charset=UTF-8");
         String url = VIEW_PATH + view;
         ServletContext sc = getServletContext();
@@ -408,7 +402,7 @@ public class RecipeServlet extends HttpServlet {
      * @return l'url de l'image
      * @throws IOException 
      */
-    private String downloadImage(Part filePart) throws IOException{
+    protected String downloadImage(Part filePart) throws IOException{
         
         //Streams
         OutputStream out = null;
@@ -453,7 +447,7 @@ public class RecipeServlet extends HttpServlet {
      * Retourne une chaîne de caractères aléatoire
      * @return La chaîne de caractères
      */
-    private String getRandomString() {
+    protected String getRandomString() {
         String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();
@@ -472,7 +466,7 @@ public class RecipeServlet extends HttpServlet {
      * @param request
      * @return La string de l'url
      */
-    private String getBaseUrl( HttpServletRequest request ) {
+    protected String getBaseUrl( HttpServletRequest request ) {
     if ( ( request.getServerPort() == 80 ) ||
          ( request.getServerPort() == 443 ) )
       return request.getScheme() + "://" +

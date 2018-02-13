@@ -30,7 +30,7 @@ public class EncryptionProvider {
     }
     
     
-    private static String securePassword(String passwordToHash, String salt)
+    protected static String securePassword(String passwordToHash, String salt)
     {
         String generatedPassword = null;
         try {
@@ -52,7 +52,7 @@ public class EncryptionProvider {
     }
     
     //Add salt
-    private static byte[] getSalt() throws NoSuchAlgorithmException
+    protected static byte[] getSalt() throws NoSuchAlgorithmException
     {
         SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
         byte[] salt = new byte[16];

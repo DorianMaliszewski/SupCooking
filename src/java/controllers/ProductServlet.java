@@ -37,6 +37,8 @@ public class ProductServlet extends HttpServlet {
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
+        request.getSession().setAttribute("message", null);
+        request.getSession().setAttribute("success", null);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -125,7 +127,7 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("id") == null) {
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
@@ -151,7 +153,7 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getMethod().equals("POST")) {
             response.setContentType("text/html;charset=UTF-8");
             Product product = new Product();
@@ -179,8 +181,8 @@ public class ProductServlet extends HttpServlet {
      * @throws IOException
      * @throws ServletException 
      */
-    private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+    protected void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if(!((User)request.getSession().getAttribute("user")).getRole().equals("ROLE_ADMIN")){
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
@@ -217,8 +219,8 @@ public class ProductServlet extends HttpServlet {
      * @throws IOException
      * @throws ServletException 
      */
-    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+    protected void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if(!((User)request.getSession().getAttribute("user")).getRole().equals("ROLE_ADMIN")){
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }

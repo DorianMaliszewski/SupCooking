@@ -19,20 +19,20 @@
         </c:choose>
             <div class="form-group">
                 <label for="name">Nom de la recette</label>
-                <input <c:if test="${!empty recipe}">value="${recipe.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom de la recette"/>
+                <input <c:if test="${!empty recipe}">value="${recipe.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom de la recette" required/>
                 <small id="nameHelp" class="form-text text-muted">3 caractères minimum.</small>
             </div>
 
             <div class="form-group">
                 <label for="image">Image</label>
-                <input <c:if test="${!empty recipe}">value="${recipe.image}"</c:if> type="file" accept="image/*" class="form-control" id="image" name="image" aria-describedby="imageHelp" placeholder="Nom de la recette"/>
+                <input <c:if test="${!empty recipe}">value="${recipe.image}"</c:if> type="file" accept="image/*" class="form-control" id="image" name="image" aria-describedby="imageHelp" placeholder="Image de la recette"/>
                 <small id="imageHelp" class="form-text text-muted">Si vous ne souhaitez pas modifier l'image actuelle alors ne rien sélectionner</small>
             </div>
 
             <div class="form-group">
                 <label for="category_id">Categorie</label>
-                <select name="category_id" class="form-control" >
-                    <option>Sélectionnez</option>
+                <select name="category_id" class="form-control" required>
+                    <option value="">Sélectionnez</option>
                     <c:forEach var="c" items="${categories}">
                         <option value="${c.id}" ${recipe.category.id == c.id ? "selected" : ""}>${c.name}</option>
                     </c:forEach>
@@ -55,37 +55,37 @@
                 
             <div class="form-group">
                 <label for="preparationTime">Temps de préparation</label>
-                <input <c:if test="${!empty recipe}">value="${recipe.preparationTime}"</c:if> type="number" min='1' class="form-control" id="preparationTime" name="preparationTime" aria-describedby="preparationTimeHelp" placeholder="Temps de préparation">
-                <small id="nameHelp" class="form-text text-muted">Temps en minutes, ne peut pas être inférieur ou égal à 0.</small>
+                <input <c:if test="${!empty recipe}">value="${recipe.preparationTime}"</c:if> type="number" min='0' class="form-control" id="preparationTime" name="preparationTime" aria-describedby="preparationTimeHelp" placeholder="Temps de préparation" required>
+                <small id="nameHelp" class="form-text text-muted">Temps en minutes, ne peut pas être inférieur à 0.</small>
             </div>
 
             <div class="form-group">
                 <label for="cookingTime">Temps de cuisson</label>
-                <input <c:if test="${!empty recipe}">value="${recipe.cookingTime}"</c:if> type="number" min='0' class="form-control" id="cookingTime" name="cookingTime" aria-describedby="cookingTimeHelp" placeholder="Temps de cuisson">
+                <input <c:if test="${!empty recipe}">value="${recipe.cookingTime}"</c:if> type="number" min='0' class="form-control" id="cookingTime" name="cookingTime" aria-describedby="cookingTimeHelp" placeholder="Temps de cuisson" required>
                 <small id="nameHelp" class="form-text text-muted">Temps en minutes, ne peut pas être inférieur à 0.</small>
             </div>
             <div class="form-group">
                 <label for="description">Description</label>
-                <textarea placeholder="Description de la recette" form="recipeForm" name="description" class="form-control" >${!empty recipe ? recipe.description : null}</textarea>
+                <textarea rows="5" placeholder="Description de la recette" form="recipeForm" name="description" class="form-control" required>${!empty recipe ? recipe.description : null}</textarea>
                 <small id="descriptionHelp" class="form-text text-muted">Il faut une description de la recette.</small>
             </div>
             <div id="divProducts">
                 <label>Produits</label>
-                <div class="form-row">
                     <c:choose>
                         <c:when test="${!empty recipe.products}">
                             <c:forEach var="produit" items="${recipe.products}" varStatus="loop">
                                 <c:set scope="page" var="compteur" value="${loop.index}"/>
+                                <div class="form-row">
                                 <div class="form-group col-7">
-                                <select name="product_${loop.index}[]" class="form-control" >
-                                    <option>Sélectionnez</option>
+                                <select name="product_${loop.index}[]" class="form-control" required>
+                                    <option value="">Sélectionnez</option>
                                     <c:forEach var="p" items="${products}">
                                         <option value="${p.id}" ${produit.product.id == p.id ? "selected" : ""}>${p.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
                             <div class="col form-group">
-                                <input type="number" step="0.1" class="form-control" name="product_${loop.index}[]" placeholder="Quantite" value='${produit.quantity}'/>
+                                <input type="number" step="0.1" class="form-control" name="product_${loop.index}[]" placeholder="Quantite" value='${produit.quantity}' required/>
                             </div>
                             <div class="col form-group">
                                 <select name="product_${loop.index}[]" class="form-control" >
@@ -101,23 +101,28 @@
                                     <option value="pincee" ${produit.unit == "pincee" ? "selected" : ""}>     Pincée       </option>
                                 </select>
                             </div>
+                            <div class="col form-group">
+                                <button onclick="deleteProductLine(this)" type="button" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            </div>
+                                </div>
                             </c:forEach>
                         </c:when>
                         <c:otherwise>
+                            <div class="form-row">
                             <div class="form-group col-7">
-                                <select name="product_0[]" class="form-control" >
-                                    <option>Sélectionnez</option>
+                                <select name="product_0[]" class="form-control" required>
+                                    <option value="">Sélectionnez</option>
                                     <c:forEach var="p" items="${products}">
                                         <option value="${p.id}">${p.name}</option>
                                     </c:forEach>
                                 </select>
                             </div>
                             <div class="col form-group">
-                                <input type="number" step="0.1" class="form-control" name="product_0[]" placeholder="Quantite"/>
+                                <input type="number" step="0.1" class="form-control" name="product_0[]" placeholder="Quantite" required/>
                             </div>
                             <div class="col form-group">
                                 <select name="product_0[]" class="form-control" >
-                                    <option>Sélectionnez l'unité</option>
+                                    <option value="">Sélectionnez l'unité</option>
                                     <option value="mg">mg</option>
                                     <option value="g">g</option>
                                     <option value="kg">kg</option>
@@ -125,11 +130,15 @@
                                     <option value="l">L</option>
                                     <option value="cas">Cuillère à soupe</option>
                                     <option value="cac">Cuillère à café</option>
+                                    <option value="pincee" ${produit.unit == "pincee" ? "selected" : ""}>     Pincée       </option>
                                 </select>
+                            </div>
+                            <div class="col form-group">
+                                <button onclick="deleteProductLine(this)" type="button" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                            </div>
                             </div>
                         </c:otherwise>
                     </c:choose>
-                </div>
             </div>
             <div class="form-group">
                 <button class="btn btn-info" id="addProduct">Ajouter un produit</button>
@@ -145,15 +154,15 @@
                 var divCreated = document.createElement('div');
                 divCreated.className = "form-row";
                 $(divCreated).html('<div class="form-group col-7">'+
-                                '<select name="product_'+cpt+'[]" class="form-control" >'+
-                                    '<option>Sélectionnez</option>'+
+                                '<select name="product_'+cpt+'[]" class="form-control" required>'+
+                                    '<option value="">Sélectionnez</option>'+
                                     <c:forEach var="p" items="${products}">
                                         "<option value='${p.id}'>${p.name}</option>"+
                                     </c:forEach>
                                 '</select>'+
                             '</div>'+
                             '<div class="col form-group">'+
-                                '<input type="number" step="0.1" class="form-control" name="product_'+cpt+'[]" placeholder="Quantite"/>'+
+                                '<input type="number" step="0.1" class="form-control" name="product_'+cpt+'[]" placeholder="Quantite" required/>'+
                             '</div>'+
                             '<div class="col form-group">'+
                                 '<select name="product_'+cpt+'[]" class="form-control" >'+
@@ -165,11 +174,22 @@
                                     '<option value="l">L</option>'+
                                     '<option value="cas">Cuillère à soupe</option>'+
                                     '<option value="cac">Cuillère à café</option>'+
+                                    '<option value="pincee" ${produit.unit == "pincee" ? "selected" : ""}>     Pincée       </option>' +
                                 '</select>'+
+                            '</div>' +
+                            '<div class="col form-group">' +
+                                '<button onclick="deleteProductLine(this)" type="button" class="deleteProductLine btn btn-danger"><i class="fas fa-trash-alt"></i></button>' +
                             '</div>');
                 cpt++;
                 div.appendChild(divCreated);
             };
+            
+            function deleteProductLine(elem){
+                var div = elem.parentNode.parentNode;
+                div.remove();
+                return false;
+            }
+            
         </script>
     </jsp:body>
 </t:layout>

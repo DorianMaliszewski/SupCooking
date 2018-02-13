@@ -15,9 +15,9 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <td>Id</td>
-                        <td>Nom</td>
-                        <td></td>
+                        <th>Id</th>
+                        <th>Nom</th>
+                        <c:if test="${user.role == 'ROLE_ADMIN'}"><th></th></c:if>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,6 +25,14 @@
                     <tr>
                         <td>${product.id}</td>
                         <td>${product.name}</td>
+                        <c:if test="${user.role == 'ROLE_ADMIN'}">
+                            <td>
+                                <a class="btn btn-info" href="${pageContext.servletContext.contextPath}/products/edit?id=${product.id}"><i class="fas fa-edit"></i></a>
+                                <form style="display: inline;" method="post" action="${pageContext.servletContext.contextPath}/products/delete?id=${product.id}">
+                                    <button class="btn btn-danger"><i class="fas fa-trash-alt"></i>&nbsp;</button>
+                                </form>
+                            </td>
+                        </c:if>
                     </tr>
                 </c:forEach>
                 </tbody>

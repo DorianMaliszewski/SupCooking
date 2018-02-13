@@ -106,7 +106,14 @@ public class ProfileServlet extends HttpServlet {
         }
     }
 
-    private void getMyRecipe(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    /**
+     * Renvoi à la page myrecipe pour voir ses recettes (l'utilisateur connecté) sinon renvoi à la page de login
+     * @param request La requête
+     * @param response La réponse
+     * @throws ServletException
+     * @throws IOException 
+     */
+    protected void getMyRecipe(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         String url = "/profil/myrecipe.jsp";
         ServletContext sc = getServletContext();
@@ -123,7 +130,7 @@ public class ProfileServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void edit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if(request.getMethod().equals("POST")){
             User user = (User)request.getSession().getAttribute("user");
             try{

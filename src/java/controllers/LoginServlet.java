@@ -141,7 +141,7 @@ public class LoginServlet extends HttpServlet {
      * @param resp La réponse
      * @throws IOException 
      */
-    private void logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void logout(HttpServletRequest req, HttpServletResponse resp) throws IOException {
        req.getSession().invalidate();
        resp.sendRedirect(req.getContextPath());
     }

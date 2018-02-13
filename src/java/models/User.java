@@ -53,6 +53,9 @@ public class User implements Serializable {
     @XmlTransient
     private String salt;
     
+    @Column(nullable = true)
+    private String role = "ROLE_USER";
+    
     
     @OneToMany(mappedBy = "createdBy")
     @XmlTransient
@@ -140,6 +143,14 @@ public class User implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     @Override

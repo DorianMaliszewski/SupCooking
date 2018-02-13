@@ -66,7 +66,7 @@
                     <div class="card mb-4 box-shadow">
                         <img class="card-img-top" data-src="${recipe.image}" alt="${recipe.name}" style="height: 225px; width: 100%; display: block;object-fit: cover" src="${recipe.image}" data-holder-rendered="true">
                         <div class="card-body">
-                            <p class="card-text">${recipe.numberOfView} vue${recipe.numberOfView > 1 ? "s" : ""} - ${recipe.numberOfMark} note${recipe.numberOfMark > 1 ? "s" : ""} - ${recipe.formattedMark} / 5</p>
+                            <p class="card-text">${!empty recipe.numberOfView ? recipe.numberOfView : "0" } vue${recipe.numberOfView > 1 ? "s" : ""} - ${!empty recipe.numberOfMark ? recipe.numberOfMark : "0" } note${recipe.numberOfMark > 1 ? "s" : ""} - ${recipe.formattedMark}</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <a href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}" class="btn btn-sm btn-outline-success" title="Voir la recette"><i class="fas fa-search"></i></a>

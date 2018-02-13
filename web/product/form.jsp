@@ -18,7 +18,7 @@
         </c:choose>
         <div class="form-group">
             <label for="name">Nom du produit</label>
-            <input <c:if test="${!empty product}">value="${product.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom du produit">
+            <input <c:if test="${!empty product}">value="${product.name}"</c:if> type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp" placeholder="Nom du produit" required>
             <small id="nameHelp" class="form-text text-muted">3 caractères minimum.</small>
         </div>
         <button type="submit" class="btn btn-primary">${prefixe}</button>

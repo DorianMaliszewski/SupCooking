@@ -114,7 +114,7 @@ public class HomeServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void search(HttpServletRequest request, HttpServletResponse response) throws ServletException,  IOException{
+    protected void search(HttpServletRequest request, HttpServletResponse response) throws ServletException,  IOException{
         
         if(request.getParameter("s") == null){
             response.sendRedirect(request.getContextPath());
@@ -140,7 +140,7 @@ public class HomeServlet extends HttpServlet {
      * @param resp La réponse
      * @throws IOException 
      */
-    private void markRecipe(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void markRecipe(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         if(req.getMethod().equalsIgnoreCase("POST")){
             Recipe r = RecipeRepository.find(Integer.parseInt(req.getParameter("id")));
             int mark = Integer.parseInt(req.getParameter("mark"));

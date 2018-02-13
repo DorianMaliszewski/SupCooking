@@ -216,6 +216,6 @@ public class Recipe implements Serializable {
     }
     
     public String getFormattedMark(){
-        return String.format("%.2f",mark / numberOfMark);
+        return mark != null && numberOfMark != null && numberOfMark != 0 ? String.format("%.2f",mark / numberOfMark) + "/ 5" : "Non notée";
     }
 }

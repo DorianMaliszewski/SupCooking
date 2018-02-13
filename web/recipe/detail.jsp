@@ -50,7 +50,7 @@
             <tr>
                 <td>Note</td>
                 <td>
-                    <fmt:formatNumber type="number" minFractionDigits="0" maxFractionDigits="2" value="${!empty recipe.mark ? recipe.mark/recipe.numberOfMark : 0}" /> / 5 - ${recipe.numberOfMark} notes 
+                     ${recipe.formattedMark} - ${recipe.numberOfMark} notes
                 </td>
             </tr>
             

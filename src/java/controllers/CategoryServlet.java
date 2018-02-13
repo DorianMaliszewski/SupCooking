@@ -130,7 +130,7 @@ public class CategoryServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         //On vérifie qu'un id est bien renseigné si je renvoi à la page d'index des catégories
         if(request.getParameter("id") == null){
             response.sendRedirect(request.getContextPath() + request.getServletPath());
@@ -163,7 +163,7 @@ public class CategoryServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void add(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if(request.getMethod().equals("POST")){
             
             Category category = new Category();
@@ -198,10 +198,10 @@ public class CategoryServlet extends HttpServlet {
      * @throws IOException
      * @throws ServletException 
      */
-    private void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void edit(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         
         //Seul l'admin peut modifier
-        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+        if(!((User)request.getSession().getAttribute("user")).getRole().equals("ROLE_ADMIN")){
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
@@ -235,10 +235,10 @@ public class CategoryServlet extends HttpServlet {
      * @throws IOException
      * @throws ServletException 
      */
-    private void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void delete(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         
         //Seul l'admin peut supprimer
-        if(((User)request.getSession().getAttribute("user")).getUsername().equals("admin")){
+        if(!((User)request.getSession().getAttribute("user")).getRole().equals("ROLE_ADMIN")){
             response.sendRedirect(request.getContextPath() + request.getServletPath());
             return;
         }
@@ -268,7 +268,7 @@ public class CategoryServlet extends HttpServlet {
      * @param success Si true message en vert sinon en rouge
      * @param request La requete sur laquelle paramétrer le message
      */
-    private void setFlashBag(String message, Boolean success, HttpServletRequest request){
+    protected void setFlashBag(String message, Boolean success, HttpServletRequest request){
         request.getSession().setAttribute("success", success);
         request.getSession().setAttribute("message", message);
     }
@@ -281,7 +281,7 @@ public class CategoryServlet extends HttpServlet {
      * @throws ServletException
      * @throws IOException 
      */
-    private void forward(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException{
+    protected void forward(HttpServletRequest request, HttpServletResponse response, String view) throws ServletException, IOException{
         response.setContentType("text/html;charset=UTF-8");
         String url = VIEW_PATH + view;
         ServletContext sc = getServletContext();
