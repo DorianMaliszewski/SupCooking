@@ -13,29 +13,27 @@
     <jsp:body>
         <h1>Résultat de la recherche</h1>
         <div class="table-responsive">
-            <table class="table">
+            <strong>Cliquez sur la recette que vous souhaitez visualiser</strong>
+            <table class="table table-hover">
                 <thead>
                     <tr>
-                        <td></td>
-                        <td>Image</td>
-                        <td>Name</td>
-                        <td>Catégorie</td>
-                        <td>Crée par</td>
-                        <td>Note</td>
+                        <th>Image</th>
+                        <th>Nom de la recette</th>
+                        <th>Catégorie</th>
+                        <th>Crée par</th>
+                        <th>Note</th>
                     </tr>
                 </thead>
                 <tbody>
-
-                <c:forEach var="recipe" items="${recipes}">
-                    <tr>
-                        <td><a class="btn btn-success" href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}"><i class="fas fa-search"></i> Voir</a></td>
-                        <td><img src='${recipe.image}' width="64" height="64"/></td>
-                        <td>${recipe.name}</td>
-                        <td>${recipe.category.name}</td>
-                        <td>${recipe.createdBy}</td>
-                        <td>${recipe.mark != null ? recipe.formattedMark : "Non notée" }</td>
-                    </tr>
-                </c:forEach>
+                    <c:forEach var="recipe" items="${recipes}">
+                        <tr onClick="location.href = '${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}'">
+                            <td><img src='${recipe.image}' width="64" height="64" style="object-fit: cover"/></td>
+                            <td>${recipe.name}</td>
+                            <td>${recipe.category.name}</td>
+                            <td>${recipe.createdBy.username}</td>
+                            <td>${recipe.mark != null ? recipe.formattedMark : "Non notée" }</td>
+                        </tr>
+                    </c:forEach>
                 </tbody>
             </table>
         </div>

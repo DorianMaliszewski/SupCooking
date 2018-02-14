@@ -6,6 +6,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Order;
 import providers.HibernateUtil;
 
 /**
@@ -28,7 +29,10 @@ public class RecipeRepository {
      * @return la liste de recette
      */
     public static List<Recipe> findAll() {
-        return new DefaultRepository<Recipe>(Recipe.class).findAll();
+         Session s = HibernateUtil.getSessionFactory().openSession();
+            List objs = s.createCriteria(Recipe.class).addOrder(Order.asc("name")).list();
+        s.close();
+        return objs;
     }
     
     /**

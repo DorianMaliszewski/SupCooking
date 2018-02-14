@@ -15,7 +15,6 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Nom</th>
                         <c:if test="${user.role == 'ROLE_ADMIN'}"><th></th></c:if>
                     </tr>
@@ -23,7 +22,6 @@
                 <tbody>
                 <c:forEach var="product" items="${products}">
                     <tr>
-                        <td>${product.id}</td>
                         <td>${product.name}</td>
                         <c:if test="${user.role == 'ROLE_ADMIN'}">
                             <td>

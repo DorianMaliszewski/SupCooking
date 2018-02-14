@@ -29,7 +29,7 @@
                     <c:forEach var="recipe" items="${user.recipes}">
                         <tr>
                             <td><a class="btn btn-success" href="${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}"><i class="fas fa-search"></i> Voir</a></td>
-                            <td><img src='${recipe.image}' width="64" height="64"/></td>
+                            <td><img src='${recipe.image}' width="64" height="64" style="object-fit: cover"/></td>
                             <td>${recipe.name}</td>
                             <td>${recipe.category.name}</td>
                             <td>${recipe.createdBy.username}</td>

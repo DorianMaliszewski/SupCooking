@@ -101,9 +101,6 @@
                                     <option value="pincee" ${produit.unit == "pincee" ? "selected" : ""}>     Pincée       </option>
                                 </select>
                             </div>
-                            <div class="col form-group">
-                                <button onclick="deleteProductLine(this)" type="button" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                            </div>
                                 </div>
                             </c:forEach>
                         </c:when>
@@ -133,15 +130,13 @@
                                     <option value="pincee" ${produit.unit == "pincee" ? "selected" : ""}>     Pincée       </option>
                                 </select>
                             </div>
-                            <div class="col form-group">
-                                <button onclick="deleteProductLine(this)" type="button" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
-                            </div>
                             </div>
                         </c:otherwise>
                     </c:choose>
             </div>
             <div class="form-group">
                 <button class="btn btn-info" id="addProduct">Ajouter un produit</button>
+                <button class="btn btn-info" id="deleteProduct">Retirer un produit</button>
                 <small id="productHelp" class="form-text text-muted">La recette doit comprendre au minimum un produit.</small>
             </div>
             <button type="submit" class="btn btn-primary">${prefixe}</button>
@@ -176,16 +171,23 @@
                                     '<option value="cac">Cuillère à café</option>'+
                                     '<option value="pincee" ${produit.unit == "pincee" ? "selected" : ""}>     Pincée       </option>' +
                                 '</select>'+
-                            '</div>' +
-                            '<div class="col form-group">' +
-                                '<button onclick="deleteProductLine(this)" type="button" class="deleteProductLine btn btn-danger"><i class="fas fa-trash-alt"></i></button>' +
                             '</div>');
                 cpt++;
                 div.appendChild(divCreated);
             };
             
+            document.getElementById("deleteProduct").onclick = function(){
+                var divProduit = document.getElementById("divProducts");
+                if(divProduit.children.length > 2){
+                    divProduit.lastElementChild.remove();
+                    cpt--;
+                }
+                return false;
+                
+            }
             function deleteProductLine(elem){
                 var div = elem.parentNode.parentNode;
+                cpt--;
                 div.remove();
                 return false;
             }

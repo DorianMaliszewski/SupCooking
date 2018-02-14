@@ -35,7 +35,7 @@ public class HomeServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         request.setAttribute("recipesNumber", RecipeRepository.count());
         request.setAttribute("usersNumber", UserRepository.count());
-        request.setAttribute("recipes", RecipeRepository.findRange(0,5));
+        request.setAttribute("recipes", RecipeRepository.findRange(0,6));
         String url = "/index.jsp";
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);

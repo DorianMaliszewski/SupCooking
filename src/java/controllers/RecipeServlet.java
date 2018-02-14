@@ -408,17 +408,18 @@ public class RecipeServlet extends HttpServlet {
         OutputStream out = null;
         InputStream inputStream = null;
         
-        // obtains the upload file part in this multipart request
         String fileName = null;
         
-        // obtains input stream of the upload file
+        // On récupère le stream de l'image
         inputStream = filePart.getInputStream();
         
+        //On recupère son nom splitter
         String[] array = filePart.getSubmittedFileName().split("\\.");
-        System.out.println("Array count : " + array.length);
         
+        //On créer le nom du fichier
         fileName = getRandomString() + "." + array[(array.length - 1)];
         
+        //On copie le fichier
         try {
             out = new FileOutputStream(new File( getServletContext().getRealPath(File.separator) + "upload/" + fileName));
 
@@ -432,6 +433,7 @@ public class RecipeServlet extends HttpServlet {
         } catch (FileNotFoundException fne) {
                 System.out.println("controllers.RecipeServlet.fillRecipe() : error : " + fne.getMessage());
         } finally {
+            //On ferme les streams
             if (out != null) {
                 out.close();
             }
@@ -448,10 +450,10 @@ public class RecipeServlet extends HttpServlet {
      * @return La chaîne de caractères
      */
     protected String getRandomString() {
-        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        String SALTCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
         StringBuilder salt = new StringBuilder();
         Random rnd = new Random();
-        while (salt.length() < 18) { // length of the random string.
+        while (salt.length() < 18) { // Longueur de la chaîne de caractère voulu
             int index = (int) (rnd.nextFloat() * SALTCHARS.length());
             salt.append(SALTCHARS.charAt(index));
         }
@@ -469,13 +471,13 @@ public class RecipeServlet extends HttpServlet {
     protected String getBaseUrl( HttpServletRequest request ) {
     if ( ( request.getServerPort() == 80 ) ||
          ( request.getServerPort() == 443 ) )
-      return request.getScheme() + "://" +
-             request.getServerName() +
-             request.getContextPath();
+        return  request.getScheme() + "://" +
+                request.getServerName() +
+                request.getContextPath();
     else
-      return request.getScheme() + "://" +
-             request.getServerName() + ":" + request.getServerPort() +
-             request.getContextPath();
+        return  request.getScheme() + "://" +
+                request.getServerName() + ":" + request.getServerPort() +
+                request.getContextPath();
   }
   
 }

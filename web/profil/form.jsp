@@ -21,6 +21,9 @@
             <div class="form-group">
                 <label for="confirmPassword">Confirmation</label>
                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirmer le mot de passe">
+                <div class="invalid-feedback" id="invalid-confirmPass">
+                    Le mot de passe ne correspond pas
+                </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
@@ -53,7 +56,8 @@
                     }
                     else{
                         document.getElementById("invalid-confirmPass").style.display = "inline";
-                        document.getElementById("confirmPassword").className = "form-control is-invalid";                        
+                        document.getElementById("confirmPassword").className = "form-control is-invalid";
+                        return false;
                     }
                 }
                 else{

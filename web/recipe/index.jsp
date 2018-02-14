@@ -26,7 +26,7 @@
                 <tbody>
                     <c:forEach var="recipe" items="${recipes}">
                         <tr onClick="location.href = '${pageContext.servletContext.contextPath}/recipes/show?id=${recipe.id}'">
-                            <td><img src='${recipe.image}' width="64" height="64"/></td>
+                            <td><img src='${recipe.image}' width="64" height="64" style="object-fit: cover"/></td>
                             <td>${recipe.name}</td>
                             <td>${recipe.category.name}</td>
                             <td>${recipe.createdBy.username}</td>
