@@ -3,10 +3,13 @@
 3JVA - Projet Supinfo
 
 Projet fait avec :
-> Glassfish 5.0
-> Java      1.8.0
-> J2EE      7
-> Hibernate 4.3
+> Glassfish     5.0
+> Java          1.8.0
+> J2EE          7
+> Hibernate     4.3
+> PostgreSQL    10.1
+
+** Pour fonctionner l'application à besoin d'un accès à une base de données générée par hibernate **
 
 Pour faire en sorte de pouvoir modifier/supprimer les catégories et les produits il faut modifier en base le role de l'utilisateur enregistrer par **ROLE_ADMIN**.
 La modification et suppression de catégorie et de produits n'était pas préciser dans le sujet mais nous l'avons quand même fait.
