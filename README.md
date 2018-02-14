@@ -8,7 +8,8 @@ Projet fait avec :
 > J2EE          7
 > Hibernate     4.3
 > PostgreSQL    10.1
-
+> Netbeans      dernière version
+> Firefox       dernière version
 ** Pour fonctionner l'application à besoin d'un accès à une base de données générée par hibernate **
 
 Pour faire en sorte de pouvoir modifier/supprimer les catégories et les produits il faut modifier en base le role de l'utilisateur enregistrer par **ROLE_ADMIN**.
