@@ -1,22 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author MaliszewskiDorian
  */
 @Entity
+@Table(name = "Products")
+@XmlRootElement
 public class Product implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -28,6 +33,21 @@ public class Product implements Serializable {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.MERGE)
+    @XmlTransient
+    @JsonbTransient
+    private List<RecipeProduct> recipes = new ArrayList<RecipeProduct>();
+
+    @XmlTransient
+    @JsonbTransient
+    public List<RecipeProduct> getRecipes() {
+        return recipes;
+    }
+
+    public void setRecipes(List<RecipeProduct> recipes) {
+        this.recipes = recipes;
+    }
+    
     public Integer getId() {
         return id;
     }

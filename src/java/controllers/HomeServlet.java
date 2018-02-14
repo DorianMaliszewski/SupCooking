@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controllers;
 
 import java.io.IOException;
@@ -14,11 +9,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import models.Recipe;
+import repositories.RecipeRepository;
+import repositories.UserRepository;
 /**
- *
- * @author MaliszewskiDorian
+ * Servlet Accueil du projet
+ * 
+ * @author Dorian Maliszewski
  */
-@WebServlet(name = "Home", urlPatterns = "/")
+@WebServlet(name = "Home", urlPatterns = {"","/search","/markRecipe"})
 public class HomeServlet extends HttpServlet {
 
     /**
@@ -32,11 +31,17 @@ public class HomeServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        System.out.println("HomeController");
         response.setContentType("text/html;charset=UTF-8");
+        request.setAttribute("recipesNumber", RecipeRepository.count());
+        request.setAttribute("usersNumber", UserRepository.count());
+        request.setAttribute("recipes", RecipeRepository.findRange(0,6));
         String url = "/index.jsp";
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
+        request.setAttribute("message", null);
+        request.setAttribute("success", null);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -78,11 +83,23 @@ public class HomeServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    /**
+     * Joue le rôle de routeur
+     * @param req La requête
+     * @param resp La reponse
+     * @throws ServletException
+     * @throws IOException 
+     */
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("utf-8");
         if(req.getServletPath().equals("/search"))
         {
             this.search(req,resp);
+        }
+        else if(req.getServletPath().equals("/markRecipe"))
+        {
+            this.markRecipe(req,resp);
         }
         else
         {
@@ -90,13 +107,48 @@ public class HomeServlet extends HttpServlet {
         }
     }
 
-    private void search(HttpServletRequest request, HttpServletResponse response) throws ServletException,  IOException{
+    /**
+     * Recherche les recettes comprenant la chaine de caractère passée en paramètre et retourne la vue avec les résultats
+     * @param request La requête
+     * @param response La réponse
+     * @throws ServletException
+     * @throws IOException 
+     */
+    protected void search(HttpServletRequest request, HttpServletResponse response) throws ServletException,  IOException{
+        
+        if(request.getParameter("s") == null){
+            response.sendRedirect(request.getContextPath());
+            request.getSession().setAttribute("message", "Renseignez un texte de recherche");
+            request.getSession().setAttribute("success", false);
+            return;
+        }
+        
         response.setContentType("text/html;charset=UTF-8");
+        request.setAttribute("recipes", RecipeRepository.findBySentences(request.getParameter("s")));
         String url = "/search.jsp";
         ServletContext sc = getServletContext();
         RequestDispatcher rd = sc.getRequestDispatcher(url);
         rd.forward(request, response);
+        request.setAttribute("message", null);
+        request.setAttribute("success", null);
     }
 
-    
+    /**
+     * Permet de mettre à jour la note de la recette
+     * Retourne OK si tous s'ets bien passé
+     * @param req La requête
+     * @param resp La réponse
+     * @throws IOException 
+     */
+    protected void markRecipe(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if(req.getMethod().equalsIgnoreCase("POST")){
+            Recipe r = RecipeRepository.find(Integer.parseInt(req.getParameter("id")));
+            int mark = Integer.parseInt(req.getParameter("mark"));
+            r.setNumberOfMark((r.getNumberOfMark() != null ? r.getNumberOfMark() : 0) + 1);
+            r.setMark(((r.getMark() != null ? r.getMark(): 0) + mark));
+            PrintWriter p = resp.getWriter();
+            RecipeRepository.edit(r);
+            p.write("OK");
+        }
+    }
 }

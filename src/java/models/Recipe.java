@@ -1,41 +1,41 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package models;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author MaliszewskiDorian
  */
 @Entity
-public class Recipes implements Serializable {
+@Table(name = "Recipes")
+@XmlRootElement
+public class Recipe implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
     private String name;
     
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String description;
     
-    @Column(nullable = false)
     private String image;
     
     @Column(name = "cooking_time")
@@ -46,7 +46,7 @@ public class Recipes implements Serializable {
     @Column(name = "preparation_time")
     private Integer preparationTime;
     
-    @Column(scale = 2)
+    @Column(scale = 2, precision = 2)
     private Float mark;
     
     @Column(name = "number_of_mark")
@@ -55,28 +55,56 @@ public class Recipes implements Serializable {
     @Column(name = "number_of_view")
     private Long numberOfView;
     
-    @ManyToOne(cascade = CascadeType.ALL)
-    private User user;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 
-    @OneToMany(cascade = CascadeType.ALL, targetEntity = Product.class)
-    private Collection<Product> products;
+    @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
+    private List<RecipeProduct> products = new ArrayList<RecipeProduct>();
+    
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 
-    public Collection<Product> getProducts() {
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+    
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @XmlTransient
+    public List<RecipeProduct> getProducts() {
         return products;
     }
 
-    public void setProducts(Collection<Product> products) {
+    public void addProduct(Product product, Float quantity, String unit) {
+        RecipeProduct association = new RecipeProduct();
+        association.setProduct(product);
+        association.setRecipe(this);
+        association.setQuantity(quantity);
+        association.setUnit(unit);
+        if(this.products == null)
+           this.products = new ArrayList<>();
+
+        this.products.add(association);
+        product.getRecipes().add(association);
+    }
+    
+    
+    public void setProducts(List<RecipeProduct> products) {
         this.products = products;
     }
     
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public String getName() {
         return name;
     }
@@ -164,13 +192,14 @@ public class Recipes implements Serializable {
         return hash;
     }
 
+    
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Recipes)) {
+        if (!(object instanceof Recipe)) {
             return false;
         }
-        Recipes other = (Recipes) object;
+        Recipe other = (Recipe) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -182,4 +211,11 @@ public class Recipes implements Serializable {
         return "models.Recipes[ id=" + id + " ]";
     }
     
+    public String getHTMLDescription(){
+        return description.replaceAll("\n", "<br>");
+    }
+    
+    public String getFormattedMark(){
+        return mark != null && numberOfMark != null && numberOfMark != 0 ? String.format("%.2f",mark / numberOfMark) + "/ 5" : "Non notée";
+    }
 }
